@@ -27,6 +27,9 @@ urlpatterns = [
     path('login/',auth_views.LoginView.as_view(template_name='users/login.html'),name="login"),
     path('logout/',auth_views.LogoutView.as_view(template_name='users/logout.html'),name="logout"),
     path('', include('blog.urls')),
+    path('verify/',user_views.verify_user,name='verify'),
+    path('user_type/',user_views.get_user_type,name='user_type'),
+    path('after_login/',user_views.after_login,name='after_login')
 ]
 
 if settings.DEBUG:
