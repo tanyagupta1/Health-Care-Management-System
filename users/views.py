@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import *
 from .models import Patient,Profile
+from .filters import *
 # Create your views here.
 
 def register(request):
@@ -105,4 +106,6 @@ def after_login(request):
 @login_required
 def get_hospitals(request):
     hospitals = Hospital.objects.all()
-    return render (request,"users/get_hospitals.html",{'hospitals':hospitals})
+    myFilter = HospitalFilter(request.GET,queryset=hospitals)
+    hospitals = myFilter.qs
+    return render (request,"users/get_hospitals.html",{'hospitals':hospitals,'myFilter':myFilter})
