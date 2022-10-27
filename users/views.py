@@ -100,3 +100,9 @@ def after_login(request):
         return redirect('profile')
     else:
         return redirect('user_type')
+
+
+@login_required
+def get_hospitals(request):
+    hospitals = Hospital.objects.all()
+    return render (request,"users/get_hospitals.html",{'hospitals':hospitals})

@@ -36,4 +36,4 @@ class PatientForm(forms.ModelForm):
 class HospitalForm(forms.ModelForm):
   class Meta:
     model = Hospital
-    fields = ["verification_doc","fullname",'mobile_number']
+    fields = ["verification_doc","fullname",'mobile_number',"location"]

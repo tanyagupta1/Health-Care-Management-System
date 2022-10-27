@@ -29,7 +29,8 @@ urlpatterns = [
     path('', include('blog.urls')),
     path('verify/',user_views.verify_user,name='verify'),
     path('user_type/',user_views.get_user_type,name='user_type'),
-    path('after_login/',user_views.after_login,name='after_login')
+    path('after_login/',user_views.after_login,name='after_login'),
+    path('get_hospitals/',user_views.get_hospitals,name='get_hospitals')
 ]
 
 if settings.DEBUG:
