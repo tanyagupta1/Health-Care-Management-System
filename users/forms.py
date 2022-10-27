@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Profile, Patient
+from .models import *
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
 
@@ -25,14 +25,15 @@ class ProfileUpdateForm(forms.ModelForm):
         fields = ['image']
 
 class UserTypeForm(forms.Form):
-    your_type = forms.CharField(label='Patient/Doctor/Insurance', max_length=100)
+    your_type = forms.CharField(label='Patient/Hospital', max_length=100)
 
 class PatientForm(forms.ModelForm):
   class Meta:
     model = Patient
-    fields = ["image","fullname",'mobile_number']
+    fields = ["verification_doc","fullname",'mobile_number']
 
-class UserTypeSpecificUpdateForm(forms.ModelForm):
-    class Meta:
-        model = Patient
-        fields = ['image','fullname','mobile_number']
+
+class HospitalForm(forms.ModelForm):
+  class Meta:
+    model = Hospital
+    fields = ["verification_doc","fullname",'mobile_number']

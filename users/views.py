@@ -27,8 +27,9 @@ def profile(request):
                                    instance=request.user.profile)
         user_type_form=''
         if(request.user.profile.user_type=="Patient"):
-            user_type_form = UserTypeSpecificUpdateForm(request.POST,request.FILES,instance = request.user.patient)
-
+            user_type_form = PatientForm(request.POST,request.FILES,instance = request.user.patient)
+        elif(request.user.profile.user_type=="Hospital"):
+            user_type_form = HospitalForm(request.POST,request.FILES,instance = request.user.hospital)
         if u_form.is_valid() and p_form.is_valid() and user_type_form.is_valid():
             u_form.save()
             p_form.save()
@@ -41,7 +42,9 @@ def profile(request):
         p_form = ProfileUpdateForm(instance=request.user.profile)
         user_type_form=''
         if(request.user.profile.user_type=="Patient"):
-            user_type_form = UserTypeSpecificUpdateForm(instance = request.user.patient)
+            user_type_form =PatientForm(instance = request.user.patient)
+        elif(request.user.profile.user_type=="Hospital"):
+            user_type_form =HospitalForm(instance = request.user.hospital)
 
     context = {
         'u_form': u_form,
@@ -53,22 +56,23 @@ def profile(request):
 
 @login_required
 def verify_user(request):
-    if request.method == 'POST':     
-        v_form=PatientForm(request.POST, instance=request.user.patient)
+    if request.method == 'POST':  
+        if(request.user.profile.user_type=="Patient"):   
+            v_form=PatientForm(request.POST, instance=request.user.patient)
+        elif(request.user.profile.user_type=="Hospital"):   
+            v_form=HospitalForm(request.POST, instance=request.user.hospital)
         if(v_form.is_valid()):
             v_form.save()
-            request.user.profile.is_verified=True
-            request.user.profile.user_type = "Patient"
-            request.user.profile.save()
             return redirect('profile')
     else:
-        p1 = Patient.objects.create(user=request.user,image = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=False)
-        v_form=PatientForm(instance=request.user.patient)
+        if(request.user.profile.user_type=="Patient"):   
+            v_form=PatientForm(instance=request.user.patient)
+        elif(request.user.profile.user_type=="Hospital"):   
+            v_form=HospitalForm(instance=request.user.hospital)
 
     context = {
         'v_form': v_form
     }
-
     return render(request, 'users/verify.html', context)
 
 @login_required
@@ -78,18 +82,21 @@ def get_user_type(request):
         if form.is_valid():
             user_type = form.cleaned_data.get('your_type')
             print("USER TYPE IS ",user_type)
+            request.user.profile.user_type_decided=True
+            request.user.profile.user_type = user_type
+            request.user.profile.save()
             if(user_type=="Patient"):
-                print("YES")
-                form2=PatientForm(request.user)
-                return redirect('verify')
+                p1 = Patient.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=False)
+            elif(user_type=="Hospital"):
+                h1 = Hospital.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=False)
+            return redirect('verify')
     else:
         form = UserTypeForm()
     return render(request, 'users/user_type.html', {'form': form})
 
 @login_required
 def after_login(request):
-    print("after login ",request.user.profile.is_verified)
-    if(request.user.profile.is_verified):
+    if(request.user.profile.user_type_decided):
         return redirect('profile')
     else:
         return redirect('user_type')
