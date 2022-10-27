@@ -31,4 +31,8 @@ class PatientForm(forms.ModelForm):
   class Meta:
     model = Patient
     fields = ["image","fullname",'mobile_number']
-    
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Patient
+        fields = ['image','fullname','mobile_number']

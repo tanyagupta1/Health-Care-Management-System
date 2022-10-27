@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, PatientForm, UserTypeForm
+from .forms import *
 from .models import Patient,Profile
 # Create your views here.
 
@@ -25,6 +25,7 @@ def profile(request):
         p_form = ProfileUpdateForm(request.POST,
                                    request.FILES,
                                    instance=request.user.profile)
+        
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
@@ -48,6 +49,8 @@ def verify_user(request):
         v_form=PatientForm(request.POST, instance=request.user.patient)
         if(v_form.is_valid()):
             v_form.save()
+            request.user.profile.is_verified=True
+            request.user.profile.save()
             return redirect('profile')
     else:
         p1 = Patient.objects.create(user=request.user,image = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=False)
