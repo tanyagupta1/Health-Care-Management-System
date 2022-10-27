@@ -38,6 +38,8 @@
                         {% if user.is_authenticated %}
                         <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
                         <a class="nav-item nav-link" href="{% url 'get_hospitals' %}">Hospitals</a>
+                        <a class="nav-item nav-link" href="{% url 'get_infirmaries' %}">Infirmaries</a>
+                        <a class="nav-item nav-link" href="{% url 'get_insurancecompanies' %}">InsuranceCompanies</a>
                         <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
 
                         {% else %}

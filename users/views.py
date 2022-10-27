@@ -31,6 +31,10 @@ def profile(request):
             user_type_form = PatientForm(request.POST,request.FILES,instance = request.user.patient)
         elif(request.user.profile.user_type=="Hospital"):
             user_type_form = HospitalForm(request.POST,request.FILES,instance = request.user.hospital)
+        elif(request.user.profile.user_type=="Infirmary"):
+            user_type_form = InfirmaryForm(request.POST,request.FILES,instance = request.user.infirmary)
+        elif(request.user.profile.user_type=="InsuranceCompany"):
+            user_type_form = InsuranceCompanyForm(request.POST,request.FILES,instance = request.user.insurancecompany)
         if u_form.is_valid() and p_form.is_valid() and user_type_form.is_valid():
             u_form.save()
             p_form.save()
@@ -46,6 +50,10 @@ def profile(request):
             user_type_form =PatientForm(instance = request.user.patient)
         elif(request.user.profile.user_type=="Hospital"):
             user_type_form =HospitalForm(instance = request.user.hospital)
+        elif(request.user.profile.user_type=="Infirmary"):
+            user_type_form =InfirmaryForm(instance = request.user.infirmary)
+        elif(request.user.profile.user_type=="InsuranceCompany"):
+            user_type_form =InsuranceCompanyForm(instance = request.user.insurancecompany)
 
     context = {
         'u_form': u_form,
@@ -62,6 +70,10 @@ def verify_user(request):
             v_form=PatientForm(request.POST, instance=request.user.patient)
         elif(request.user.profile.user_type=="Hospital"):   
             v_form=HospitalForm(request.POST, instance=request.user.hospital)
+        elif(request.user.profile.user_type=="Infirmary"):   
+            v_form=InfirmaryForm(request.POST, instance=request.user.infirmary)
+        elif(request.user.profile.user_type=="InsuranceCompany"):   
+            v_form=InsuranceCompanyForm(request.POST, instance=request.user.insurancecompany)
         if(v_form.is_valid()):
             v_form.save()
             return redirect('profile')
@@ -70,6 +82,10 @@ def verify_user(request):
             v_form=PatientForm(instance=request.user.patient)
         elif(request.user.profile.user_type=="Hospital"):   
             v_form=HospitalForm(instance=request.user.hospital)
+        elif(request.user.profile.user_type=="Infirmary"):   
+            v_form=InfirmaryForm(instance=request.user.infirmary)
+        elif(request.user.profile.user_type=="InsuranceCompany"):   
+            v_form=InsuranceCompanyForm(instance=request.user.insurancecompany)
 
     context = {
         'v_form': v_form
@@ -90,6 +106,11 @@ def get_user_type(request):
                 p1 = Patient.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=False)
             elif(user_type=="Hospital"):
                 h1 = Hospital.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=False)
+            elif(user_type=="Infirmary"):
+                i1 = Infirmary.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=False)
+            elif(user_type=="InsuranceCompany"):
+                ic1 = InsuranceCompany.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=False)
+            
             return redirect('verify')
     else:
         form = UserTypeForm()
@@ -109,3 +130,17 @@ def get_hospitals(request):
     myFilter = HospitalFilter(request.GET,queryset=hospitals)
     hospitals = myFilter.qs
     return render (request,"users/get_hospitals.html",{'hospitals':hospitals,'myFilter':myFilter})
+
+@login_required
+def get_infirmaries(request):
+    infirmaries = Infirmary.objects.all()
+    myFilter = InfirmaryFilter(request.GET,queryset=infirmaries)
+    infirmaries = myFilter.qs
+    return render (request,"users/get_infirmaries.html",{'infirmaries':infirmaries,'myFilter':myFilter})
+
+@login_required
+def get_insurancecompanies(request):
+    insurancecompanies = InsuranceCompany.objects.all()
+    myFilter = InsuranceCompanyFilter(request.GET,queryset=insurancecompanies)
+    insurancecompanies = myFilter.qs
+    return render (request,"users/get_insurancecompanies.html",{'insurancecompanies':insurancecompanies,'myFilter':myFilter})

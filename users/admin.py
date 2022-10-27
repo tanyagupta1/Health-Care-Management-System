@@ -8,3 +8,5 @@ from .models import *
 admin.site.register(Profile)
 admin.site.register(Patient)
 admin.site.register(Hospital)
+admin.site.register(Infirmary)
+admin.site.register(InsuranceCompany)

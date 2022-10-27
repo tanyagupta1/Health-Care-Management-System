@@ -1,0 +1,30 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1>List of Insurance Companies</h1>
+<div>
+<form method="get">
+    {{myFilter.form}}
+    <button type="submit">Search</button>
+</form>
+</div>
+<div>
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Phone Number</th>
+        <th>Location</th>
+      </tr>
+{% for ic in insurancecompanies %}
+
+<tr>
+    <td>{{ic.fullname}}</td>
+    <td>{{ic.mobile_number}}</td>
+    <td>{{ic.location}}</td>
+</tr>
+
+{% endfor %}
+</table>
+
+</div>
+{% endblock content %}

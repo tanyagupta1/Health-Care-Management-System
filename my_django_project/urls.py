@@ -30,7 +30,9 @@ urlpatterns = [
     path('verify/',user_views.verify_user,name='verify'),
     path('user_type/',user_views.get_user_type,name='user_type'),
     path('after_login/',user_views.after_login,name='after_login'),
-    path('get_hospitals/',user_views.get_hospitals,name='get_hospitals')
+    path('get_hospitals/',user_views.get_hospitals,name='get_hospitals'),
+    path('get_infirmaries/',user_views.get_infirmaries,name='get_infirmaries'),
+    path('get_insurancecompanies/',user_views.get_insurancecompanies,name='get_insurancecompanies')
 ]
 
 if settings.DEBUG:
