@@ -25,20 +25,28 @@ def profile(request):
         p_form = ProfileUpdateForm(request.POST,
                                    request.FILES,
                                    instance=request.user.profile)
-        
-        if u_form.is_valid() and p_form.is_valid():
+        user_type_form=''
+        if(request.user.profile.user_type=="Patient"):
+            user_type_form = UserTypeSpecificUpdateForm(request.POST,request.FILES,instance = request.user.patient)
+
+        if u_form.is_valid() and p_form.is_valid() and user_type_form.is_valid():
             u_form.save()
             p_form.save()
+            user_type_form.save()
             messages.success(request, f'Your account has been updated!')
             return redirect('profile')
 
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)
+        user_type_form=''
+        if(request.user.profile.user_type=="Patient"):
+            user_type_form = UserTypeSpecificUpdateForm(instance = request.user.patient)
 
     context = {
         'u_form': u_form,
-        'p_form': p_form
+        'p_form': p_form,
+        'user_type_form':user_type_form
     }
 
     return render(request, 'users/profile.html', context)
@@ -50,6 +58,7 @@ def verify_user(request):
         if(v_form.is_valid()):
             v_form.save()
             request.user.profile.is_verified=True
+            request.user.profile.user_type = "Patient"
             request.user.profile.save()
             return redirect('profile')
     else:
