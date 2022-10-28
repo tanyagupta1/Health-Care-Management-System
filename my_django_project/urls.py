@@ -32,7 +32,9 @@ urlpatterns = [
     path('after_login/',user_views.after_login,name='after_login'),
     path('get_hospitals/',user_views.get_hospitals,name='get_hospitals'),
     path('get_infirmaries/',user_views.get_infirmaries,name='get_infirmaries'),
-    path('get_insurancecompanies/',user_views.get_insurancecompanies,name='get_insurancecompanies')
+    path('get_insurancecompanies/',user_views.get_insurancecompanies,name='get_insurancecompanies'),
+    path('upload_medical_doc_p/',user_views.upload_medical_doc_p,name='upload_medical_doc_p'),
+    path('upload_medical_doc_h/',user_views.upload_medical_doc_h,name='upload_medical_doc_h')
 ]
 
 if settings.DEBUG:

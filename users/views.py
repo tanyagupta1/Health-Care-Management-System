@@ -144,3 +144,35 @@ def get_insurancecompanies(request):
     myFilter = InsuranceCompanyFilter(request.GET,queryset=insurancecompanies)
     insurancecompanies = myFilter.qs
     return render (request,"users/get_insurancecompanies.html",{'insurancecompanies':insurancecompanies,'myFilter':myFilter})
+
+@login_required
+def upload_medical_doc_p(request): 
+    if request.method=='POST':
+        form = MedicalDocumentsFormPatient(request.POST,request.FILES)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.patient= request.user.patient
+            obj.save()
+            return redirect('upload_medical_doc_p')
+    else:
+        form = MedicalDocumentsFormPatient()
+    docs = MedicalDocuments.objects.filter(patient=request.user.patient)
+    return render(request, 'users/upload_medical_doc.html', {'form': form,'docs':docs})
+
+@login_required
+def upload_medical_doc_h(request): 
+    if request.method=='POST':
+        form = MedicalDocumentsFormHospital(request.POST,request.FILES)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.hospital= request.user.hospital
+            obj.is_verified = True
+            obj.save()
+            return redirect('upload_medical_doc_h')
+    else:
+        form = MedicalDocumentsFormHospital()
+    docs = MedicalDocuments.objects.filter(hospital=request.user.hospital)
+    return render(request, 'users/upload_medical_doc.html', {'form': form,'docs':docs})
+
+
+
