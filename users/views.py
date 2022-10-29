@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import *
-from .models import Patient,Profile
+from .models import Patient,Profile , ViewAccess
 from .filters import *
 import random
 import smtplib
@@ -145,6 +145,51 @@ def after_login(request):
         return redirect('user_type')         # return redirect('register')
         
 
+def doc_share_otp(request):
+    form = OtpForm()
+    userkey = request.session.get('urt')
+    otp = request.session.get('otp')
+    dockey = request.session.get('drt')
+    medDoc = MedicalDocuments.objects.filter(pk=dockey)[0]
+    user2 = User.objects.filter(pk =userkey)[0]
+    h1 = ViewAccess.objects.create(document = medDoc,  user=user2)
+    print(h1)
+    return render(request,"users/doc_share_otp.html" , {"form": form})
+
+
+def ShareDocP(request , pk):
+    
+    if request.method=='POST':
+        userpk = request.POST["xyz"]
+        request.session['urt'] = userpk
+        request.session['drt'] = pk
+        print("hey")
+        try:
+            otp=random.randint(1000,9999)
+            request.session['otp'] = otp
+            email = str(request.user.email)
+            # s = smtplib.SMTP('smtp.gmail.com', 587)
+            # s.starttls()
+            # s.login("agarg19030@gmail.com", "kgsbxtxqjjtoddwk")
+            # s.sendmail("msg", email,"your otp is"+ str(otp))
+            print("Success")
+            return redirect("doc_share_otp")
+        except:
+            pass
+    email = str(request.user.email)
+    print(email)
+    hospitalsAll = Hospital.objects.all()
+    infirmariesAll = Infirmary.objects.all()
+    insurancecompaniesAll = InsuranceCompany.objects.all()
+    
+    return render(request,"users/ShareDocP.html" , {
+        "hospitalsAll" : hospitalsAll ,
+        "infirmariesAll" :infirmariesAll , 
+        "insurancecompaniesAll" : insurancecompaniesAll, 
+    })
+    
+    
+
 
 @login_required
 def get_hospitals(request):
@@ -166,3 +211,38 @@ def get_insurancecompanies(request):
     myFilter = InsuranceCompanyFilter(request.GET,queryset=insurancecompanies)
     insurancecompanies = myFilter.qs
     return render (request,"users/get_insurancecompanies.html",{'insurancecompanies':insurancecompanies,'myFilter':myFilter})
+
+@login_required
+def upload_medical_doc_p(request): 
+    print("hello")
+    if request.method=='POST':
+        print(request.POST)
+        form = MedicalDocumentsFormPatient(request.POST,request.FILES)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.patient= request.user.patient
+            obj.save()
+            return redirect('upload_medical_doc_p')
+    else:
+        form = MedicalDocumentsFormPatient()
+    docs = MedicalDocuments.objects.filter(patient=request.user.patient)
+    print(docs)
+    return render(request, 'users/upload_medical_doc.html', {'form': form,'docs':docs})
+
+@login_required
+def upload_medical_doc_h(request): 
+    if request.method=='POST':
+        form = MedicalDocumentsFormHospital(request.POST,request.FILES)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.hospital= request.user.hospital
+            obj.is_verified = True
+            obj.save()
+            return redirect('upload_medical_doc_h')
+    else:
+        form = MedicalDocumentsFormHospital()
+    docs = MedicalDocuments.objects.filter(hospital=request.user.hospital)
+    return render(request, 'users/upload_medical_doc.html', {'form': form,'docs':docs})
+
+
+

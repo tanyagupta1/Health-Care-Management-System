@@ -48,3 +48,21 @@ class InsuranceCompany(models.Model):
     is_verified = models.BooleanField(default=False,null=True) # set true after document verification
     def __str__(self):
         return f'{self.user.username} InsuranceCompany'
+
+
+
+
+class MedicalDocuments(models.Model):
+    patient = models.ForeignKey(Patient,on_delete=models.CASCADE,null=True)
+    hospital = models.ForeignKey(Hospital,on_delete=models.CASCADE,null=True)
+    medical_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
+    is_verified = models.BooleanField(default=False,null=True) 
+    def __str__(self):
+        return f'{self.patient.fullname} {self.hospital.fullname} Medical Doc'
+
+
+class ViewAccess(models.Model):
+    document = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
+    user = models.ForeignKey(User,on_delete=models.CASCADE,null=True)
+    def __str__(self):
+        return "Acess"

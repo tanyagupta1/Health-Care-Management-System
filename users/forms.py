@@ -28,6 +28,13 @@ class UserTypeForm(forms.Form):
     your_type = forms.CharField(label='Patient/Hospital/Infirmary/InsuranceCompany', max_length=100)
     otp = forms.CharField(label='otp', max_length=10)
 
+
+
+
+class OtpForm(forms.Form):
+  otp = forms.CharField(label='otp', max_length=10)
+
+
 class PatientForm(forms.ModelForm):
   class Meta:
     model = Patient
@@ -48,3 +55,13 @@ class InsuranceCompanyForm(forms.ModelForm):
   class Meta:
     model = InsuranceCompany
     fields = ["verification_doc","fullname",'mobile_number',"location"]
+
+class MedicalDocumentsFormPatient(forms.ModelForm):
+    class Meta:
+      model = MedicalDocuments
+      fields = ['hospital','medical_doc']
+
+class MedicalDocumentsFormHospital(forms.ModelForm):
+    class Meta:
+      model = MedicalDocuments
+      fields = ['patient','medical_doc']
