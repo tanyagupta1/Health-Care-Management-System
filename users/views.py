@@ -205,6 +205,21 @@ def get_hospitals(request):
     return render (request,"users/get_hospitals.html",{'hospitals':hospitals,'myFilter':myFilter})
 
 @login_required
+def getDocsH(request):
+    docsAll = ViewAccess.objects.filter(user=request.user)
+    return render (request,"users/getDocsH.html",{'docs':docsAll})
+
+@login_required
+def getDocsI(request):
+    docsAll = ViewAccess.objects.filter(user=request.user)
+    return render (request,"users/getDocsH.html",{'docs':docsAll})
+
+@login_required
+def getDocsP(request):
+    docsAll = ViewAccess.objects.filter(user=request.user)
+    return render (request,"users/getDocsH.html",{'docs':docsAll})
+
+@login_required
 def get_infirmaries(request):
     infirmaries = Infirmary.objects.all()
     myFilter = InfirmaryFilter(request.GET,queryset=infirmaries)

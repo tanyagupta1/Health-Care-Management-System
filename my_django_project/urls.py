@@ -32,11 +32,18 @@ urlpatterns = [
     path('doc_share_otp/',user_views.doc_share_otp,name='doc_share_otp'),
     path('after_login/',user_views.after_login,name='after_login'),
     path('get_hospitals/',user_views.get_hospitals,name='get_hospitals'),
+    path('getDocsH/',user_views.getDocsH,name='getDocsH'),
+    path('getDocsI/',user_views.getDocsI,name='getDocsI'),
+    path('getDocsP/',user_views.getDocsP,name='getDocsP'),
+    
+
     path('get_infirmaries/',user_views.get_infirmaries,name='get_infirmaries'),
     path('get_insurancecompanies/',user_views.get_insurancecompanies,name='get_insurancecompanies'),
     path('upload_medical_doc_p/',user_views.upload_medical_doc_p,name='upload_medical_doc_p'),
     path('upload_medical_doc_h/',user_views.upload_medical_doc_h,name='upload_medical_doc_h'), 
     path('ShareDocP/<str:pk>/',user_views.ShareDocP,name='ShareDocP')
+
+    
     
 ]
 

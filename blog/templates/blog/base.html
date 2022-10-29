@@ -41,6 +41,11 @@
                         <a class="nav-item nav-link" href="{% url 'upload_medical_doc_p' %}">Upload Docs</a>
                         {% elif user.profile.user_type == "Hospital" %}
                         <a class="nav-item nav-link" href="{% url 'upload_medical_doc_h' %}">Upload Docs</a>
+                        <a class="nav-item nav-link" href="{% url 'getDocsH' %}">Check friend Request</a>
+                        {% elif user.profile.user_type == "Infirmary" %}
+                        <a class="nav-item nav-link" href="{% url 'getDocsP' %}">Check friend Request Inf</a>
+                        {% elif user.profile.user_type == "InsuranceCompany" %}
+                        <a class="nav-item nav-link" href="{% url 'getDocsI' %}">Check friend Request Ins</a>
                         {% endif %}
                         <a class="nav-item nav-link" href="{% url 'get_hospitals' %}">Hospitals</a>
                         <a class="nav-item nav-link" href="{% url 'get_infirmaries' %}">Infirmaries</a>
