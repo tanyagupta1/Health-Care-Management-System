@@ -65,3 +65,8 @@ class MedicalDocumentsFormHospital(forms.ModelForm):
     class Meta:
       model = MedicalDocuments
       fields = ['patient','medical_doc']
+
+class InfirmaryOrderForm(forms.ModelForm):
+    class Meta:
+      model = InfirmaryOrder
+      fields = ['doc','amount_paid','description']

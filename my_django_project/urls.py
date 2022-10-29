@@ -41,7 +41,8 @@ urlpatterns = [
     path('get_insurancecompanies/',user_views.get_insurancecompanies,name='get_insurancecompanies'),
     path('upload_medical_doc_p/',user_views.upload_medical_doc_p,name='upload_medical_doc_p'),
     path('upload_medical_doc_h/',user_views.upload_medical_doc_h,name='upload_medical_doc_h'), 
-    path('ShareDocP/<str:pk>/',user_views.ShareDocP,name='ShareDocP')
+    path('ShareDocP/<str:pk>/',user_views.ShareDocP,name='ShareDocP'),
+    path('place_infirmary_order/<str:inf_pk>/',user_views.place_infirmary_order,name='place_infirmary_order')
 
     
     

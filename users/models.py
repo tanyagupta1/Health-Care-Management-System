@@ -16,6 +16,7 @@ class Patient(models.Model):
     fullname = models.CharField(max_length=200,null=True)
     mobile_number = models.IntegerField(null=True) 
     is_verified = models.BooleanField(default=False,null=True) # set true after document verification
+    wallet = models.IntegerField(default=1000000,null=True)
     def __str__(self):
         return f'{self.user.username} Patient'
 
@@ -36,6 +37,7 @@ class Infirmary(models.Model):
     location = models.CharField(default="Delhi",max_length=200,null=True)
     mobile_number = models.IntegerField(null=True) 
     is_verified = models.BooleanField(default=False,null=True) # set true after document verification
+    wallet = models.IntegerField(default=1000000,null=True)
     def __str__(self):
         return f'{self.user.username} Infirmary'
 
@@ -46,6 +48,7 @@ class InsuranceCompany(models.Model):
     location = models.CharField(default="Delhi",max_length=200,null=True)
     mobile_number = models.IntegerField(null=True) 
     is_verified = models.BooleanField(default=False,null=True) # set true after document verification
+    wallet = models.IntegerField(default=1000000,null=True)
     def __str__(self):
         return f'{self.user.username} InsuranceCompany'
 
@@ -65,4 +68,13 @@ class ViewAccess(models.Model):
     document = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
     user = models.ForeignKey(User,on_delete=models.CASCADE,null=True)
     def __str__(self):
-        return "Acess"
+        return "Access"
+
+class InfirmaryOrder(models.Model):
+    patient = models.ForeignKey(Patient,on_delete=models.CASCADE,null=True)
+    infirmary = models.ForeignKey(Infirmary,on_delete=models.CASCADE,null=True)
+    doc = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
+    amount_paid = models.IntegerField(default=0,null=True)
+    description = models.TextField(default="na",null=True)
+    def __str__(self):
+        return "{self.patient.fullname} {self.infirmary.fullname} Infirmary Order"

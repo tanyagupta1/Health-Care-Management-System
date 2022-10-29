@@ -221,6 +221,11 @@ def getDocsP(request):
 
 @login_required
 def get_infirmaries(request):
+    if request.method=='POST':
+        infirmary_pk = request.POST["infirmary_pk"]
+        print(infirmary_pk)
+        print("infirmary is: ",Infirmary.objects.get(pk=infirmary_pk))
+        return redirect("/place_infirmary_order/"+infirmary_pk)
     infirmaries = Infirmary.objects.all()
     myFilter = InfirmaryFilter(request.GET,queryset=infirmaries)
     infirmaries = myFilter.qs
@@ -265,5 +270,22 @@ def upload_medical_doc_h(request):
     docs = MedicalDocuments.objects.filter(hospital=request.user.hospital)
     return render(request, 'users/upload_medical_doc.html', {'form': form,'docs':docs})
 
+@login_required
+def place_infirmary_order(request,inf_pk):
+    if(request.method=="POST"):
+        form = InfirmaryOrderForm(request.POST)
+        if(form.is_valid()):
+            obj = form.save(commit=False)
+            obj.infirmary= Infirmary.objects.get(pk=inf_pk)
+            obj.patient = request.user.patient
+            obj.save()
+            request.user.patient.wallet -= form.cleaned_data.get('amount_paid')
+            obj.infirmary.wallet += form.cleaned_data.get('amount_paid')
+            # print(request.user.patient.wallet,' ',obj.infirmary.wallet)
+            request.user.patient.save()
+            obj.infirmary.save()
+            return redirect('get_infirmaries')
 
-
+    form = InfirmaryOrderForm()
+    form.fields['doc'].queryset = MedicalDocuments.objects.filter(patient=request.user.patient)
+    return render(request, 'users/place_infirmary_order.html', {'form': form})
