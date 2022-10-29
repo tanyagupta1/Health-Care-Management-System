@@ -146,14 +146,21 @@ def after_login(request):
         
 
 def doc_share_otp(request):
+    if request.method == 'POST':
+        form = OtpForm(request.POST)
+        if form.is_valid():
+            userkey = request.session.get('urt')
+            otp = request.session.get('otp')
+            if (str(otp) == str(form.cleaned_data.get('otp'))):
+                print("hahahah")
+                dockey = request.session.get('drt')
+                medDoc = MedicalDocuments.objects.filter(pk=dockey)[0]
+                user2 = User.objects.filter(pk =userkey)[0]
+                h1 = ViewAccess.objects.create(document = medDoc,  user=user2)
+                return redirect('upload_medical_doc_p')
+                
+
     form = OtpForm()
-    userkey = request.session.get('urt')
-    otp = request.session.get('otp')
-    dockey = request.session.get('drt')
-    medDoc = MedicalDocuments.objects.filter(pk=dockey)[0]
-    user2 = User.objects.filter(pk =userkey)[0]
-    h1 = ViewAccess.objects.create(document = medDoc,  user=user2)
-    print(h1)
     return render(request,"users/doc_share_otp.html" , {"form": form})
 
 
@@ -168,16 +175,15 @@ def ShareDocP(request , pk):
             otp=random.randint(1000,9999)
             request.session['otp'] = otp
             email = str(request.user.email)
-            # s = smtplib.SMTP('smtp.gmail.com', 587)
-            # s.starttls()
-            # s.login("agarg19030@gmail.com", "kgsbxtxqjjtoddwk")
-            # s.sendmail("msg", email,"your otp is"+ str(otp))
+            s = smtplib.SMTP('smtp.gmail.com', 587)
+            s.starttls()
+            s.login("agarg19030@gmail.com", "kgsbxtxqjjtoddwk")
+            s.sendmail("msg", email,"your otp is"+ str(otp))
             print("Success")
             return redirect("doc_share_otp")
         except:
             pass
-    email = str(request.user.email)
-    print(email)
+    
     hospitalsAll = Hospital.objects.all()
     infirmariesAll = Infirmary.objects.all()
     insurancecompaniesAll = InsuranceCompany.objects.all()
