@@ -5,6 +5,9 @@ from django.contrib.auth.decorators import login_required
 from .forms import *
 from .models import Patient,Profile
 from .filters import *
+import random
+import smtplib
+import time
 # Create your views here.
 
 def register(request):
@@ -98,6 +101,11 @@ def get_user_type(request):
         form = UserTypeForm(request.POST)
         if form.is_valid():
             user_type = form.cleaned_data.get('your_type')
+            otp = request.session.get('otp')
+            if (str(otp) == str(form.cleaned_data.get('otp'))):
+                print("hahahah")
+            else:
+                return redirect("login")
             print("USER TYPE IS ",user_type)
             request.user.profile.user_type_decided=True
             request.user.profile.user_type = user_type
@@ -121,7 +129,21 @@ def after_login(request):
     if(request.user.profile.user_type_decided):
         return redirect('profile')
     else:
-        return redirect('user_type')
+        try:
+            otp=random.randint(1000,9999)
+            request.session['otp'] = otp
+            email = str(request.user.email)
+            s = smtplib.SMTP('smtp.gmail.com', 587)
+            s.starttls()
+            s.login("agarg19030@gmail.com", "kgsbxtxqjjtoddwk")
+            s.sendmail("msg", email,"your otp is"+ str(otp))
+            print("Success")
+        except Exception as e:
+            print(e)
+            return redirect('login')
+                # messages.error(request,"Sorry. some trouble")
+        return redirect('user_type')         # return redirect('register')
+        
 
 
 @login_required

@@ -26,6 +26,7 @@ class ProfileUpdateForm(forms.ModelForm):
 
 class UserTypeForm(forms.Form):
     your_type = forms.CharField(label='Patient/Hospital/Infirmary/InsuranceCompany', max_length=100)
+    otp = forms.CharField(label='otp', max_length=10)
 
 class PatientForm(forms.ModelForm):
   class Meta:
