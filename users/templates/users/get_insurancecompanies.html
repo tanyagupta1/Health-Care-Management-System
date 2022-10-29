@@ -21,6 +21,13 @@
     <td>{{ic.fullname}}</td>
     <td>{{ic.mobile_number}}</td>
     <td>{{ic.location}}</td>
+    <td>
+        <form  method="post">
+        {% csrf_token %}
+        <input id="insurance_pk" type="text" name="insurance_pk" hidden value = {{ic.pk}}  >
+        <input type="submit" value="Request refund">
+        </form>
+    </td>
 </tr>
 
 {% endfor %}

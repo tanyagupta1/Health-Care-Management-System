@@ -1,0 +1,12 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<form method = "POST" >
+    {% csrf_token %}
+   
+        {{form|crispy}}
+    <div class="form-group">
+        <button class="btn btn-outline-info">Request Refund</button>
+    </div>
+</form>
+{% endblock content %}

@@ -8,12 +8,14 @@
 <div>
 <table border="1">
     <tr>
+        <th>Patient </th>
         <th>Document</th>
         
       </tr>
 {% for doc in docs %}
 
 <tr>
+    <td>{{doc.document.patient.fullname}}</td>
     <td><a href="{{doc.document.medical_doc.url}}">{{doc.document.medical_doc.url}}</a></td>
     
 

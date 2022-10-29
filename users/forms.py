@@ -70,3 +70,8 @@ class InfirmaryOrderForm(forms.ModelForm):
     class Meta:
       model = InfirmaryOrder
       fields = ['doc','amount_paid','description']
+
+class InsuranceRefundForm(forms.ModelForm):
+    class Meta:
+      model = InsuranceRefund
+      fields = ['doc','refund_amount']

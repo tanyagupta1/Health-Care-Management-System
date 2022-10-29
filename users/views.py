@@ -207,6 +207,7 @@ def get_hospitals(request):
 @login_required
 def getDocsH(request):
     docsAll = ViewAccess.objects.filter(user=request.user)
+    print(docsAll[0].document.patient.fullname)
     return render (request,"users/getDocsH.html",{'docs':docsAll})
 
 @login_required
@@ -233,6 +234,9 @@ def get_infirmaries(request):
 
 @login_required
 def get_insurancecompanies(request):
+    if request.method=='POST':
+        insurance_pk = request.POST["insurance_pk"]
+        return redirect("/request_insurance_refund/"+insurance_pk)
     insurancecompanies = InsuranceCompany.objects.all()
     myFilter = InsuranceCompanyFilter(request.GET,queryset=insurancecompanies)
     insurancecompanies = myFilter.qs
@@ -289,3 +293,18 @@ def place_infirmary_order(request,inf_pk):
     form = InfirmaryOrderForm()
     form.fields['doc'].queryset = MedicalDocuments.objects.filter(patient=request.user.patient)
     return render(request, 'users/place_infirmary_order.html', {'form': form})
+
+@login_required
+def request_insurance_refund(request,insurance_pk):
+    if(request.method=="POST"):
+        form = InsuranceRefundForm(request.POST)
+        if(form.is_valid()):
+            obj = form.save(commit=False)
+            obj.insurancecompany= InsuranceCompany.objects.get(pk=insurance_pk)
+            obj.patient = request.user.patient
+            obj.save()
+            return redirect('get_insurancecompanies')
+
+    form = InsuranceRefundForm()
+    form.fields['doc'].queryset = MedicalDocuments.objects.filter(patient=request.user.patient)
+    return render(request, 'users/request_insurance_refund.html', {'form': form})

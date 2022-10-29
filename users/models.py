@@ -77,4 +77,12 @@ class InfirmaryOrder(models.Model):
     amount_paid = models.IntegerField(default=0,null=True)
     description = models.TextField(default="na",null=True)
     def __str__(self):
-        return "{self.patient.fullname} {self.infirmary.fullname} Infirmary Order"
+        return f'{self.patient.fullname} {self.infirmary.fullname} Infirmary Order'
+
+class InsuranceRefund(models.Model):
+    patient = models.ForeignKey(Patient,on_delete=models.CASCADE,null=True)
+    insurance_company = models.ForeignKey(InsuranceCompany,on_delete=models.CASCADE,null=True)
+    doc = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
+    refund_amount= models.IntegerField(default=0,null=True)
+    def __str__(self):
+        return f'{self.patient.fullname} {self.insurance_company.fullname} Insurance Refund'
