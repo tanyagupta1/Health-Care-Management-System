@@ -47,8 +47,10 @@
                         <a class="nav-item nav-link" href="{% url 'getDocsH' %}">Docs Shared with Me(H)</a>
                         {% elif user.profile.user_type == "Infirmary" %}
                         <a class="nav-item nav-link" href="{% url 'getDocsP' %}">Docs Shared with Me(IF)</a>
+                        <a class="nav-item nav-link" href="{% url 'get_infirmary_orders' %}">Infirmary orders</a>
                         {% elif user.profile.user_type == "InsuranceCompany" %}
                         <a class="nav-item nav-link" href="{% url 'getDocsI' %}">Docs Shared with Me(IC)</a>
+                        <a class="nav-item nav-link" href="{% url 'get_insurance_refund_requests' %}">Refund requests</a>
                         {% endif %}
                         <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
 

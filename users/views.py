@@ -300,7 +300,7 @@ def request_insurance_refund(request,insurance_pk):
         form = InsuranceRefundForm(request.POST)
         if(form.is_valid()):
             obj = form.save(commit=False)
-            obj.insurancecompany= InsuranceCompany.objects.get(pk=insurance_pk)
+            obj.insurance_company= InsuranceCompany.objects.get(pk=insurance_pk)
             obj.patient = request.user.patient
             obj.save()
             return redirect('get_insurancecompanies')
@@ -308,3 +308,13 @@ def request_insurance_refund(request,insurance_pk):
     form = InsuranceRefundForm()
     form.fields['doc'].queryset = MedicalDocuments.objects.filter(patient=request.user.patient)
     return render(request, 'users/request_insurance_refund.html', {'form': form})
+
+@login_required
+def get_insurance_refund_requests(request):
+    refund_requests = InsuranceRefund.objects.filter(insurance_company = request.user.insurancecompany)
+    return render (request,"users/get_insurance_refund_requests.html",{'requests':refund_requests})
+
+@login_required
+def get_infirmary_orders(request):
+    orders = InfirmaryOrder.objects.filter(infirmary = request.user.infirmary)
+    return render (request,"users/get_infirmary_orders.html",{'requests':orders})

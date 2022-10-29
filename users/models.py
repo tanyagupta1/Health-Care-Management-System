@@ -85,4 +85,4 @@ class InsuranceRefund(models.Model):
     doc = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
     refund_amount= models.IntegerField(default=0,null=True)
     def __str__(self):
-        return f'{self.patient.fullname} {self.insurance_company.fullname} Insurance Refund'
+        return f'Insurance Refund'
