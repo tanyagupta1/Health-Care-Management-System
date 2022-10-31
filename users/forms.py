@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Profile
+from .models import *
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
 
@@ -23,3 +23,55 @@ class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['image']
+
+class UserTypeForm(forms.Form):
+    your_type = forms.CharField(label='Patient/Hospital/Infirmary/InsuranceCompany', max_length=100)
+    otp = forms.CharField(label='otp', max_length=10)
+
+
+
+
+class OtpForm(forms.Form):
+  otp = forms.CharField(label='otp', max_length=10)
+
+
+class PatientForm(forms.ModelForm):
+  class Meta:
+    model = Patient
+    fields = ["verification_doc","fullname",'mobile_number']
+
+
+class HospitalForm(forms.ModelForm):
+  class Meta:
+    model = Hospital
+    fields = ["verification_doc","fullname",'mobile_number',"location"]
+
+class InfirmaryForm(forms.ModelForm):
+  class Meta:
+    model = Infirmary
+    fields = ["verification_doc","fullname",'mobile_number',"location"]
+
+class InsuranceCompanyForm(forms.ModelForm):
+  class Meta:
+    model = InsuranceCompany
+    fields = ["verification_doc","fullname",'mobile_number',"location"]
+
+class MedicalDocumentsFormPatient(forms.ModelForm):
+    class Meta:
+      model = MedicalDocuments
+      fields = ['hospital','medical_doc']
+
+class MedicalDocumentsFormHospital(forms.ModelForm):
+    class Meta:
+      model = MedicalDocuments
+      fields = ['patient','medical_doc']
+
+class InfirmaryOrderForm(forms.ModelForm):
+    class Meta:
+      model = InfirmaryOrder
+      fields = ['doc','amount_paid','description']
+
+class InsuranceRefundForm(forms.ModelForm):
+    class Meta:
+      model = InsuranceRefund
+      fields = ['doc','refund_amount']

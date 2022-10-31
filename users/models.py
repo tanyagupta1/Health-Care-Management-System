@@ -4,6 +4,85 @@ from django.contrib.auth.models import User
 
 class Profile(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
-    image = models.FileField(default='default.jpg',upload_to='profile_pics')
+    user_type_decided=models.BooleanField(default=False) # this is set to true once user type is decided
+    image = models.ImageField(default='default.jpg',upload_to='profile_pics',null=True)
+    user_type = models.CharField(default='na',max_length=200)
     def __str__(self):
         return f'{self.user.username} Profile'
+
+class Patient(models.Model):
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    verification_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
+    fullname = models.CharField(max_length=200,null=True)
+    mobile_number = models.IntegerField(null=True) 
+    is_verified = models.BooleanField(default=False,null=True) # set true after document verification
+    wallet = models.IntegerField(default=1000000,null=True)
+    def __str__(self):
+        return f'{self.user.username} Patient'
+
+class Hospital(models.Model):
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    verification_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
+    fullname = models.CharField(max_length=200,null=True)
+    location = models.CharField(default="Delhi",max_length=200,null=True)
+    mobile_number = models.IntegerField(null=True) 
+    is_verified = models.BooleanField(default=False,null=True) # set true after document verification
+    def __str__(self):
+        return f'{self.user.username} Hospital'
+
+class Infirmary(models.Model):
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    verification_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
+    fullname = models.CharField(max_length=200,null=True)
+    location = models.CharField(default="Delhi",max_length=200,null=True)
+    mobile_number = models.IntegerField(null=True) 
+    is_verified = models.BooleanField(default=False,null=True) # set true after document verification
+    wallet = models.IntegerField(default=1000000,null=True)
+    def __str__(self):
+        return f'{self.user.username} Infirmary'
+
+class InsuranceCompany(models.Model):
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    verification_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
+    fullname = models.CharField(max_length=200,null=True)
+    location = models.CharField(default="Delhi",max_length=200,null=True)
+    mobile_number = models.IntegerField(null=True) 
+    is_verified = models.BooleanField(default=False,null=True) # set true after document verification
+    wallet = models.IntegerField(default=1000000,null=True)
+    def __str__(self):
+        return f'{self.user.username} InsuranceCompany'
+
+
+
+
+class MedicalDocuments(models.Model):
+    patient = models.ForeignKey(Patient,on_delete=models.CASCADE,null=True)
+    hospital = models.ForeignKey(Hospital,on_delete=models.CASCADE,null=True)
+    medical_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
+    is_verified = models.BooleanField(default=False,null=True) 
+    def __str__(self):
+        return f'{self.patient.fullname} {self.hospital.fullname} Medical Doc'
+
+
+class ViewAccess(models.Model):
+    document = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
+    user = models.ForeignKey(User,on_delete=models.CASCADE,null=True)
+    def __str__(self):
+        return "Access"
+
+class InfirmaryOrder(models.Model):
+    patient = models.ForeignKey(Patient,on_delete=models.CASCADE,null=True)
+    infirmary = models.ForeignKey(Infirmary,on_delete=models.CASCADE,null=True)
+    doc = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
+    amount_paid = models.IntegerField(default=0,null=True)
+    description = models.TextField(default="na",null=True)
+    def __str__(self):
+        return f'{self.patient.fullname} {self.infirmary.fullname} Infirmary Order'
+
+class InsuranceRefund(models.Model):
+    patient = models.ForeignKey(Patient,on_delete=models.CASCADE,null=True)
+    insurance_company = models.ForeignKey(InsuranceCompany,on_delete=models.CASCADE,null=True)
+    doc = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
+    refund_amount= models.IntegerField(default=0,null=True)
+    def __str__(self):
+        return f'Insurance Refund'

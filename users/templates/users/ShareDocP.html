@@ -1,0 +1,70 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<style>
+    h3 {margin: 3;}
+    table {margin:3; }
+</style>
+<div>
+    <h3>hospitals</h3>
+    <table border="1">
+        <tr>
+            <th>Hospital Name</th>
+          </tr>
+    {% for hospital in hospitalsAll %}
+    
+    <tr>
+        <td>{{hospital.fullname}}</td>
+        
+        <td><form  method="post">
+            {% csrf_token %}
+            <input id="xyz" type="text" name="xyz" hidden value = {{hospital.user.pk}}  >
+            <input type="submit" value="Share it with this">
+            </form></td>
+    </tr>
+    
+    {% endfor %}
+    </table>
+    <h3>Insurance Company</h3>
+
+    <table border="1">
+        <tr>
+            <th>Insurance Company Name</th>
+          </tr>
+    {% for ins in insurancecompaniesAll %}
+    
+    <tr>
+        <td>{{ins.fullname}}</td>
+        <td><form  method="post">
+            {% csrf_token %}
+            <input id="xyz" type="text" name="xyz" hidden value = {{ins.user.pk}}  >
+            <input type="submit" value="Share it with this">
+            </form></td>
+        
+    </tr>
+    
+    {% endfor %}
+    </table>
+    <h3>Infirmary </h3>  
+
+    <table border="1">
+        <tr>
+            <th>infirmary Name</th>
+          </tr>
+    {% for infirmary in infirmariesAll %}
+    
+    <tr>
+        <td>{{infirmary.fullname}}</td>
+        <td><form  method="post">
+            {% csrf_token %}
+            <input id="xyz" type="text" name="xyz" hidden value = {{infirmary.user.pk}}  >
+            <input type="submit" value="Share it with this">
+            </form></td>
+        
+    </tr>
+    
+    {% endfor %}
+    </table>
+    </div>
+
+    
+    {% endblock content %}
