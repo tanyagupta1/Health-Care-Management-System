@@ -9,6 +9,7 @@
         <th>Hospital</th>
         <th>is_verified</th>
         <th>share button</th>
+        <th>Delete </th>
       </tr>
 {% for ic in docs %}
 
@@ -18,6 +19,7 @@
     <td>{{ic.hospital}}</td>
     <td>{{ic.is_verified}}</td>
     <td><a href = "{% url 'ShareDocP' ic.pk %}">Share</a></td>
+    <td><a href = "{% url 'delete_doc' ic.pk %}">Delete</a></td>
     
 </tr>
 

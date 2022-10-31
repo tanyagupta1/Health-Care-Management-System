@@ -318,3 +318,8 @@ def get_insurance_refund_requests(request):
 def get_infirmary_orders(request):
     orders = InfirmaryOrder.objects.filter(infirmary = request.user.infirmary)
     return render (request,"users/get_infirmary_orders.html",{'requests':orders})
+
+@login_required
+def delete_doc(request,doc_pk):
+    MedicalDocuments.objects.get(pk=doc_pk).delete()
+    return redirect('upload_medical_doc_p')
