@@ -3,11 +3,12 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import *
-from .models import Patient,Profile , ViewAccess
+from .models import Patient, Profile, ViewAccess, User_Password
 from .filters import *
 import random
 import smtplib
 import time
+import hashlib
 # Create your views here.
 
 def register(request):
@@ -17,6 +18,17 @@ def register(request):
             form.save()
             username = form.cleaned_data.get('username')
             messages.success(request,f'Account created for {username}!')
+
+            password = form.cleaned_data.get('password1')
+            passwordHash = hashlib.sha256(password.encode()).hexdigest()
+
+            User_Password.objects.create(
+                username = form.cleaned_data.get('username'), 
+                email_id = form.cleaned_data.get('email'), 
+                password_hash = passwordHash
+            ) 
+            print("hello")
+
             return redirect('login')
     else:
         form = UserRegisterForm()

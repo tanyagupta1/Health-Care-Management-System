@@ -10,6 +10,13 @@ class Profile(models.Model):
     def __str__(self):
         return f'{self.user.username} Profile'
 
+class User_Password(models.Model):
+    username = models.CharField(default='na', max_length = 200)
+    email_id = models.CharField(default='na', max_length = 200)
+    password_hash = models.CharField(default='na', max_length = 512)
+    def __str__(self):
+        return f'{self.username} User_Password'
+
 class Patient(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
     verification_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
