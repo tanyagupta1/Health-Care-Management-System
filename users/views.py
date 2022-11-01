@@ -323,3 +323,14 @@ def get_infirmary_orders(request):
 def delete_doc(request,doc_pk):
     MedicalDocuments.objects.get(pk=doc_pk).delete()
     return redirect('upload_medical_doc_p')
+
+
+@login_required
+def payback(request,refund_pk):
+    refund_request = InsuranceRefund.objects.get(pk = refund_pk)
+    request.user.insurancecompany.wallet -= refund_request.refund_amount
+    refund_request.patient.wallet+= refund_request.refund_amount
+    request.user.insurancecompany.save()
+    refund_request.patient.save()
+    InsuranceRefund.objects.get(pk=refund_pk).delete()
+    return redirect('get_insurance_refund_requests')
