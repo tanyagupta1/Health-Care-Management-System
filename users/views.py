@@ -46,7 +46,7 @@ def login(request):
                 request.session['user'] = email
                 return redirect('after_login')
             else:
-                messages.error(request, "Sahi password daal re bc  ")
+                messages.error(request, "Sahi password daal re  ")
                 return redirect("login")
             
     else:
@@ -85,12 +85,20 @@ def profile(request):
         user_type_form=''
         if(request.user.profile.user_type=="Patient"):
             user_type_form =PatientForm(instance = request.user.patient)
+            context = {'u_form': u_form,'p_form': p_form,'user_type_form':user_type_form}
+            return render(request, 'users/profilepatient.html', context)
         elif(request.user.profile.user_type=="Hospital"):
             user_type_form =HospitalForm(instance = request.user.hospital)
+            context = {'u_form': u_form,'p_form': p_form,'user_type_form':user_type_form}
+            return render(request, 'users/profilehospital.html', context)
         elif(request.user.profile.user_type=="Infirmary"):
             user_type_form =InfirmaryForm(instance = request.user.infirmary)
+            context = {'u_form': u_form,'p_form': p_form,'user_type_form':user_type_form}
+            return render(request, 'users/profileinf.html', context)
         elif(request.user.profile.user_type=="InsuranceCompany"):
             user_type_form =InsuranceCompanyForm(instance = request.user.insurancecompany)
+            context = {'u_form': u_form,'p_form': p_form,'user_type_form':user_type_form}
+            return render(request, 'users/profileins.html', context)
 
     context = {
         'u_form': u_form,
@@ -203,7 +211,7 @@ def doc_share_otp(request):
                 print("hahahah")
                 dockey = request.session.get('drt')
                 medDoc = MedicalDocuments.objects.filter(pk=dockey)[0]
-                user2 = User.objects.filter(pk =userkey)[0]
+                user2 = User_Auth.objects.filter(pk =userkey)[0]
                 h1 = ViewAccess.objects.create(document = medDoc,  user=user2)
                 return redirect('upload_medical_doc_p')
                 
@@ -217,6 +225,7 @@ def ShareDocP(request , pk):
     if request.method=='POST':
         userpk = request.POST["xyz"]
         request.session['urt'] = userpk
+        print(userpk)
         request.session['drt'] = pk
         print("hey")
         try:
@@ -264,14 +273,14 @@ def getDocsI(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     docsAll = ViewAccess.objects.filter(user=request.user)
-    return render (request,"users/getDocsH.html",{'docs':docsAll})
+    return render (request,"users/getDocsInsur.html",{'docs':docsAll})
 
 
 def getDocsP(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     docsAll = ViewAccess.objects.filter(user=request.user)
-    return render (request,"users/getDocsH.html",{'docs':docsAll})
+    return render (request,"users/getDocsI.html",{'docs':docsAll})
 
 
 def get_infirmaries(request):
@@ -339,8 +348,10 @@ def upload_medical_doc_h(request):
     docs = MedicalDocuments.objects.filter(hospital=request.user.hospital)
     return render(request, 'users/upload_medical_doc.html', {'form': form,'docs':docs})
 
-@login_required
+# #@loggin_required
 def place_infirmary_order(request,inf_pk):
+    emailsp = request.session["user"]
+    request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     if(request.method=="POST"):
         form = InfirmaryOrderForm(request.POST)
         if(form.is_valid()):
@@ -359,8 +370,10 @@ def place_infirmary_order(request,inf_pk):
     form.fields['doc'].queryset = MedicalDocuments.objects.filter(patient=request.user.patient)
     return render(request, 'users/place_infirmary_order.html', {'form': form})
 
-@login_required
+# @login_required
 def request_insurance_refund(request,insurance_pk):
+    emailsp = request.session["user"]
+    request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     if(request.method=="POST"):
         form = InsuranceRefundForm(request.POST)
         if(form.is_valid()):
@@ -374,24 +387,32 @@ def request_insurance_refund(request,insurance_pk):
     form.fields['doc'].queryset = MedicalDocuments.objects.filter(patient=request.user.patient)
     return render(request, 'users/request_insurance_refund.html', {'form': form})
 
-@login_required
+#@loggin_required
 def get_insurance_refund_requests(request):
+    emailsp = request.session["user"]
+    request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     refund_requests = InsuranceRefund.objects.filter(insurance_company = request.user.insurancecompany)
     return render (request,"users/get_insurance_refund_requests.html",{'requests':refund_requests})
 
-@login_required
+#@loggin_required
 def get_infirmary_orders(request):
+    emailsp = request.session["user"]
+    request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     orders = InfirmaryOrder.objects.filter(infirmary = request.user.infirmary)
     return render (request,"users/get_infirmary_orders.html",{'requests':orders})
 
-@login_required
+#@loggin_required
 def delete_doc(request,doc_pk):
+    emailsp = request.session["user"]
+    request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     MedicalDocuments.objects.get(pk=doc_pk).delete()
     return redirect('upload_medical_doc_p')
 
 
-@login_required
+#@loggin_required
 def payback(request,refund_pk):
+    emailsp = request.session["user"]
+    request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     refund_request = InsuranceRefund.objects.get(pk = refund_pk)
     request.user.insurancecompany.wallet -= refund_request.refund_amount
     refund_request.patient.wallet+= refund_request.refund_amount
