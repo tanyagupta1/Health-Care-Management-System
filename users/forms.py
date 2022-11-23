@@ -7,7 +7,7 @@ class UserRegisterForm(UserCreationForm):
 
     class Meta:  # configs of the form
         model = User # form.save() saves it to user model
-        fields = ['username','email','password1','password2']
+        fields = ['email','password1','password2']
 
 # test12345
 #test 123456
@@ -29,7 +29,10 @@ class UserTypeForm(forms.Form):
     otp = forms.CharField(label='otp', max_length=10)
 
 
-
+class LoginForm(forms.Form):
+    email = forms.CharField(label='email', max_length=100)
+    password  = forms.CharField(label='Password', max_length=10)
+    
 
 class OtpForm(forms.Form):
   otp = forms.CharField(label='otp', max_length=10)
