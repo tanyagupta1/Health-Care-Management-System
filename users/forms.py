@@ -47,17 +47,17 @@ class PatientForm(forms.ModelForm):
 class HospitalForm(forms.ModelForm):
   class Meta:
     model = Hospital
-    fields = ["verification_doc","fullname",'mobile_number',"location"]
+    fields = ["verification_doc","fullname",'mobile_number',"location",'description','image_1','image_2']
 
 class InfirmaryForm(forms.ModelForm):
   class Meta:
     model = Infirmary
-    fields = ["verification_doc","fullname",'mobile_number',"location"]
+    fields = ["verification_doc","fullname",'mobile_number',"location",'description','image_1','image_2']
 
 class InsuranceCompanyForm(forms.ModelForm):
   class Meta:
     model = InsuranceCompany
-    fields = ["verification_doc","fullname",'mobile_number',"location"]
+    fields = ["verification_doc","fullname",'mobile_number',"location",'description','image_1','image_2']
 
 class MedicalDocumentsFormPatient(forms.ModelForm):
     class Meta:
@@ -68,3 +68,13 @@ class MedicalDocumentsFormHospital(forms.ModelForm):
     class Meta:
       model = MedicalDocuments
       fields = ['patient','medical_doc']
+
+class InfirmaryOrderForm(forms.ModelForm):
+    class Meta:
+      model = InfirmaryOrder
+      fields = ['doc','amount_paid','description']
+
+class InsuranceRefundForm(forms.ModelForm):
+    class Meta:
+      model = InsuranceRefund
+      fields = ['doc','refund_amount']

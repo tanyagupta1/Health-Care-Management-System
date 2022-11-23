@@ -29,6 +29,7 @@ class Patient(models.Model):
     fullname = models.CharField(max_length=200,null=True)
     mobile_number = models.IntegerField(null=True) 
     is_verified = models.BooleanField(default=False,null=True) # set true after document verification
+    wallet = models.IntegerField(default=1000000,null=True)
     def __str__(self):
         return f'{self.user.email_id} Patient'
 
@@ -39,6 +40,9 @@ class Hospital(models.Model):
     location = models.CharField(default="Delhi",max_length=200,null=True)
     mobile_number = models.IntegerField(null=True) 
     is_verified = models.BooleanField(default=False,null=True) # set true after document verification
+    description = models.TextField(default="na",null=True)
+    image_1 = models.ImageField(default='default.jpg',upload_to='profile_pics',null=True)
+    image_2 = models.ImageField(default='default.jpg',upload_to='profile_pics',null=True)
     def __str__(self):
         return f'{self.user.email_id} Hospital'
 
@@ -49,6 +53,10 @@ class Infirmary(models.Model):
     location = models.CharField(default="Delhi",max_length=200,null=True)
     mobile_number = models.IntegerField(null=True) 
     is_verified = models.BooleanField(default=False,null=True) # set true after document verification
+    wallet = models.IntegerField(default=1000000,null=True)
+    description = models.TextField(default="na",null=True)
+    image_1 = models.ImageField(default='default.jpg',upload_to='profile_pics',null=True)
+    image_2 = models.ImageField(default='default.jpg',upload_to='profile_pics',null=True)
     def __str__(self):
         return f'{self.user.email_id} Infirmary'
 
@@ -59,6 +67,10 @@ class InsuranceCompany(models.Model):
     location = models.CharField(default="Delhi",max_length=200,null=True)
     mobile_number = models.IntegerField(null=True) 
     is_verified = models.BooleanField(default=False,null=True) # set true after document verification
+    description = models.TextField(default="na",null=True)
+    image_1 = models.ImageField(default='default.jpg',upload_to='profile_pics',null=True)
+    image_2 = models.ImageField(default='default.jpg',upload_to='profile_pics',null=True)
+    wallet = models.IntegerField(default=1000000,null=True)
     def __str__(self):
         return f'{self.user.email_id} InsuranceCompany'
 
@@ -78,4 +90,21 @@ class ViewAccess(models.Model):
     document = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
     user = models.ForeignKey(User_Auth,on_delete=models.CASCADE,null=True)
     def __str__(self):
-        return "Acess"
+        return "Access"
+
+class InfirmaryOrder(models.Model):
+    patient = models.ForeignKey(Patient,on_delete=models.CASCADE,null=True)
+    infirmary = models.ForeignKey(Infirmary,on_delete=models.CASCADE,null=True)
+    doc = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
+    amount_paid = models.IntegerField(default=0,null=True)
+    description = models.TextField(default="na",null=True)
+    def __str__(self):
+        return f'{self.patient.fullname} {self.infirmary.fullname} Infirmary Order'
+
+class InsuranceRefund(models.Model):
+    patient = models.ForeignKey(Patient,on_delete=models.CASCADE,null=True)
+    insurance_company = models.ForeignKey(InsuranceCompany,on_delete=models.CASCADE,null=True)
+    doc = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
+    refund_amount= models.IntegerField(default=0,null=True)
+    def __str__(self):
+        return f'Insurance Refund'

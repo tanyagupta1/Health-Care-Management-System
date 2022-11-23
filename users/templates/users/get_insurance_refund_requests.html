@@ -1,0 +1,29 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1>Refund Requests</h1>
+
+<div>
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Doc</th>
+        <th>Amount</th>
+        <th>Fulfill</th>
+      </tr>
+{% for r in requests%}
+
+<tr>
+    <td>{{r.patient.fullname}}</td>
+    <td><a href="{{r.doc.medical_doc.url}}">{{r.doc.medical_doc.url}}</a></td>
+    <td>{{r.refund_amount}}</td>
+    <td><a href = "{% url 'payback' r.pk %}">Payback</a></td>
+    
+
+</tr>
+
+{% endfor %}
+</table>
+
+</div>
+{% endblock content %}

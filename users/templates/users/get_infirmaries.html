@@ -21,6 +21,13 @@
     <td>{{inf.fullname}}</td>
     <td>{{inf.mobile_number}}</td>
     <td>{{inf.location}}</td>
+    <td>
+        <form  method="post">
+        {% csrf_token %}
+        <input id="infirmary_pk" type="text" name="infirmary_pk" hidden value = {{inf.pk}}  >
+        <input type="submit" value="Place order">
+        </form>
+    </td>
 </tr>
 
 {% endfor %}

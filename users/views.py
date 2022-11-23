@@ -256,6 +256,7 @@ def getDocsH(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     docsAll = ViewAccess.objects.filter(user=request.user)
+    print(docsAll[0].document.patient.fullname)
     return render (request,"users/getDocsH.html",{'docs':docsAll})
 
 
@@ -276,6 +277,11 @@ def getDocsP(request):
 def get_infirmaries(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+    if request.method=='POST':
+        infirmary_pk = request.POST["infirmary_pk"]
+        print(infirmary_pk)
+        print("infirmary is: ",Infirmary.objects.get(pk=infirmary_pk))
+        return redirect("/place_infirmary_order/"+infirmary_pk)
     infirmaries = Infirmary.objects.all()
     myFilter = InfirmaryFilter(request.GET,queryset=infirmaries)
     infirmaries = myFilter.qs
@@ -285,6 +291,9 @@ def get_infirmaries(request):
 def get_insurancecompanies(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+    if request.method=='POST':
+        insurance_pk = request.POST["insurance_pk"]
+        return redirect("/request_insurance_refund/"+insurance_pk)
     insurancecompanies = InsuranceCompany.objects.all()
     myFilter = InsuranceCompanyFilter(request.GET,queryset=insurancecompanies)
     insurancecompanies = myFilter.qs
@@ -330,5 +339,63 @@ def upload_medical_doc_h(request):
     docs = MedicalDocuments.objects.filter(hospital=request.user.hospital)
     return render(request, 'users/upload_medical_doc.html', {'form': form,'docs':docs})
 
+@login_required
+def place_infirmary_order(request,inf_pk):
+    if(request.method=="POST"):
+        form = InfirmaryOrderForm(request.POST)
+        if(form.is_valid()):
+            obj = form.save(commit=False)
+            obj.infirmary= Infirmary.objects.get(pk=inf_pk)
+            obj.patient = request.user.patient
+            obj.save()
+            request.user.patient.wallet -= form.cleaned_data.get('amount_paid')
+            obj.infirmary.wallet += form.cleaned_data.get('amount_paid')
+            # print(request.user.patient.wallet,' ',obj.infirmary.wallet)
+            request.user.patient.save()
+            obj.infirmary.save()
+            return redirect('get_infirmaries')
+
+    form = InfirmaryOrderForm()
+    form.fields['doc'].queryset = MedicalDocuments.objects.filter(patient=request.user.patient)
+    return render(request, 'users/place_infirmary_order.html', {'form': form})
+
+@login_required
+def request_insurance_refund(request,insurance_pk):
+    if(request.method=="POST"):
+        form = InsuranceRefundForm(request.POST)
+        if(form.is_valid()):
+            obj = form.save(commit=False)
+            obj.insurance_company= InsuranceCompany.objects.get(pk=insurance_pk)
+            obj.patient = request.user.patient
+            obj.save()
+            return redirect('get_insurancecompanies')
+
+    form = InsuranceRefundForm()
+    form.fields['doc'].queryset = MedicalDocuments.objects.filter(patient=request.user.patient)
+    return render(request, 'users/request_insurance_refund.html', {'form': form})
+
+@login_required
+def get_insurance_refund_requests(request):
+    refund_requests = InsuranceRefund.objects.filter(insurance_company = request.user.insurancecompany)
+    return render (request,"users/get_insurance_refund_requests.html",{'requests':refund_requests})
+
+@login_required
+def get_infirmary_orders(request):
+    orders = InfirmaryOrder.objects.filter(infirmary = request.user.infirmary)
+    return render (request,"users/get_infirmary_orders.html",{'requests':orders})
+
+@login_required
+def delete_doc(request,doc_pk):
+    MedicalDocuments.objects.get(pk=doc_pk).delete()
+    return redirect('upload_medical_doc_p')
 
 
+@login_required
+def payback(request,refund_pk):
+    refund_request = InsuranceRefund.objects.get(pk = refund_pk)
+    request.user.insurancecompany.wallet -= refund_request.refund_amount
+    refund_request.patient.wallet+= refund_request.refund_amount
+    request.user.insurancecompany.save()
+    refund_request.patient.save()
+    InsuranceRefund.objects.get(pk=refund_pk).delete()
+    return redirect('get_insurance_refund_requests')

@@ -42,7 +42,14 @@ urlpatterns = [
     path('get_insurancecompanies/',user_views.get_insurancecompanies,name='get_insurancecompanies'),
     path('upload_medical_doc_p/',user_views.upload_medical_doc_p,name='upload_medical_doc_p'),
     path('upload_medical_doc_h/',user_views.upload_medical_doc_h,name='upload_medical_doc_h'), 
-    path('ShareDocP/<str:pk>/',user_views.ShareDocP,name='ShareDocP')
+    path('ShareDocP/<str:pk>/',user_views.ShareDocP,name='ShareDocP'),
+    path('place_infirmary_order/<str:inf_pk>/',user_views.place_infirmary_order,name='place_infirmary_order'),
+    path('request_insurance_refund/<str:insurance_pk>/',user_views.request_insurance_refund,name='request_insurance_refund'),
+
+    path('get_insurance_refund_requests/',user_views.get_insurance_refund_requests,name='get_insurance_refund_requests'),
+    path('get_infirmary_orders/',user_views.get_infirmary_orders,name='get_infirmary_orders'),
+    path('delete_doc/<str:doc_pk>/',user_views.delete_doc,name='delete_doc'),
+    path('payback/<str:refund_pk>/',user_views.payback,name='payback')
 
     
     

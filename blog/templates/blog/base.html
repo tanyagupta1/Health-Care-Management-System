@@ -23,7 +23,7 @@
     <header class="site-header">
         <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
             <div class="container">
-                <a class="navbar-brand mr-4" href="{% url 'blog-home' %}">Django Blog</a>
+                <a class="navbar-brand mr-4" href="{% url 'blog-home' %}">HealthCare System</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
                     aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -39,13 +39,19 @@
                         <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
                         {% if user.profile.user_type == "Patient" %}
                         <a class="nav-item nav-link" href="{% url 'upload_medical_doc_p' %}">Upload Docs</a>
+                        <a class="nav-item nav-link" href="{% url 'get_hospitals' %}">Hospitals</a>
+                        <a class="nav-item nav-link" href="{% url 'get_infirmaries' %}">Infirmaries</a>
+                        <a class="nav-item nav-link" href="{% url 'get_insurancecompanies' %}">InsuranceCompanies</a>
                         {% elif user.profile.user_type == "Hospital" %}
                         <a class="nav-item nav-link" href="{% url 'upload_medical_doc_h' %}">Upload Docs</a>
-                        <a class="nav-item nav-link" href="{% url 'getDocsH' %}">Check friend Request</a>
+                        <a class="nav-item nav-link" href="{% url 'getDocsH' %}">Docs Shared with Me(H)</a>
+                        
                         {% elif user.profile.user_type == "Infirmary" %}
-                        <a class="nav-item nav-link" href="{% url 'getDocsP' %}">Check friend Request Inf</a>
+                        <a class="nav-item nav-link" href="{% url 'getDocsP' %}">Docs Shared with Me(IF)</a>
+                        <a class="nav-item nav-link" href="{% url 'get_infirmary_orders' %}">Infirmary orders</a>
                         {% elif user.profile.user_type == "InsuranceCompany" %}
-                        <a class="nav-item nav-link" href="{% url 'getDocsI' %}">Check friend Request Ins</a>
+                        <a class="nav-item nav-link" href="{% url 'getDocsI' %}">Docs Shared with Me(IC)</a>
+                        <a class="nav-item nav-link" href="{% url 'get_insurance_refund_requests' %}">Refund requests</a>
                         {% endif %}
                         <a class="nav-item nav-link" href="{% url 'upload_medical_doc_p' %}">Upload Docs</a>
                         <a class="nav-item nav-link" href="{% url 'get_hospitals' %}">Hospitals</a>
