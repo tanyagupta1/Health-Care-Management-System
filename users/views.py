@@ -58,8 +58,8 @@ def login(request):
 def profile(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+    request.user.is_authenticated=True
     if request.method == 'POST':
-        u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(request.POST,
                                    request.FILES,
                                    instance=request.user.profile)
@@ -72,41 +72,34 @@ def profile(request):
             user_type_form = InfirmaryForm(request.POST,request.FILES,instance = request.user.infirmary)
         elif(request.user.profile.user_type=="InsuranceCompany"):
             user_type_form = InsuranceCompanyForm(request.POST,request.FILES,instance = request.user.insurancecompany)
-        if u_form.is_valid() and p_form.is_valid() and user_type_form.is_valid():
-            u_form.save()
+        if p_form.is_valid() and user_type_form.is_valid():
             p_form.save()
             user_type_form.save()
             messages.success(request, f'Your account has been updated!')
             return redirect('profile')
+    
+
 
     else:
-        u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)
         user_type_form=''
         if(request.user.profile.user_type=="Patient"):
             user_type_form =PatientForm(instance = request.user.patient)
-            context = {'u_form': u_form,'p_form': p_form,'user_type_form':user_type_form}
+            context = {'p_form': p_form,'user_type_form':user_type_form}
             return render(request, 'users/profilepatient.html', context)
         elif(request.user.profile.user_type=="Hospital"):
             user_type_form =HospitalForm(instance = request.user.hospital)
-            context = {'u_form': u_form,'p_form': p_form,'user_type_form':user_type_form}
+            context = {'p_form': p_form,'user_type_form':user_type_form}
             return render(request, 'users/profilehospital.html', context)
         elif(request.user.profile.user_type=="Infirmary"):
             user_type_form =InfirmaryForm(instance = request.user.infirmary)
-            context = {'u_form': u_form,'p_form': p_form,'user_type_form':user_type_form}
+            context = {'p_form': p_form,'user_type_form':user_type_form}
             return render(request, 'users/profileinf.html', context)
         elif(request.user.profile.user_type=="InsuranceCompany"):
             user_type_form =InsuranceCompanyForm(instance = request.user.insurancecompany)
-            context = {'u_form': u_form,'p_form': p_form,'user_type_form':user_type_form}
+            context = {'p_form': p_form,'user_type_form':user_type_form}
             return render(request, 'users/profileins.html', context)
 
-    context = {
-        'u_form': u_form,
-        'p_form': p_form,
-        'user_type_form':user_type_form
-    }
-
-    return render(request, 'users/profile.html', context)
 
 
 def verify_user(request):

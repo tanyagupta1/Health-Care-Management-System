@@ -13,11 +13,11 @@ class UserRegisterForm(UserCreationForm):
 #test 123456
 
 class UserUpdateForm(forms.ModelForm):
-    email = forms.EmailField(required=True)
+    email_id = forms.EmailField(required=True)
 
     class Meta:  # configs of the form
-        model = User # form.save() saves it to user model
-        fields = ['username','email']
+        model = User_Auth # form.save() saves it to user model
+        fields = ['email_id']
 
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
