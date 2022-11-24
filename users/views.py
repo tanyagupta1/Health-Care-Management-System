@@ -17,9 +17,9 @@ def register(request):
         if form.is_valid():
             password = form.cleaned_data.get('password1')
             passwordHash = hashlib.sha256(password.encode()).hexdigest()
-            email_id = form.cleaned_data.get('email')
+            email_id = form.cleaned_data.get('email_id')
             h1 = User_Auth.objects.create(
-                email_id = form.cleaned_data.get('email'),
+                email_id = form.cleaned_data.get('email_id'),
                 password_hash = passwordHash)
             print(h1)
             Profile.objects.create(user = h1)
@@ -35,21 +35,23 @@ def login(request):
     if request.method=='POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            password = form.cleaned_data.get('password')
-            email = form.cleaned_data.get('email')
-            passwordHash = hashlib.sha256(password.encode()).hexdigest()
-            passReterive  =User_Auth.objects.filter(email_id = email)[0].password_hash
-            if ( passwordHash==passReterive):
-                #user ko set krna hai 
-                request.user = User_Auth.objects.filter(email_id = email)[0]
-                print (request.user)
-                request.session['user'] = email
-                return redirect('after_login')
-            else:
-                messages.error(request, "Sahi password daal re  ")
+            try:
+                password = form.cleaned_data.get('password')
+                email = form.cleaned_data.get('email')
+                passwordHash = hashlib.sha256(password.encode()).hexdigest()
+                passReterive  =User_Auth.objects.filter(email_id = email)[0].password_hash
+                if ( passwordHash==passReterive):
+                    #user ko set krna hai 
+                    request.user = User_Auth.objects.filter(email_id = email)[0]
+                    print (request.user)
+                    request.session['user'] = email
+                    return redirect('after_login')
+            except:
+                messages.error(request, "Invalid Credentials")
                 return redirect("login")
             
     else:
+        
         form = LoginForm()
     return render(request,'users/login.html',{'form':form})        
 
@@ -58,7 +60,6 @@ def login(request):
 def profile(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
-    request.user.is_authenticated=True
     if request.method == 'POST':
         p_form = ProfileUpdateForm(request.POST,
                                    request.FILES,
@@ -79,26 +80,20 @@ def profile(request):
             return redirect('profile')
     
 
-
     else:
         p_form = ProfileUpdateForm(instance=request.user.profile)
         user_type_form=''
         if(request.user.profile.user_type=="Patient"):
             user_type_form =PatientForm(instance = request.user.patient)
-            context = {'p_form': p_form,'user_type_form':user_type_form}
-            return render(request, 'users/profilepatient.html', context)
         elif(request.user.profile.user_type=="Hospital"):
             user_type_form =HospitalForm(instance = request.user.hospital)
-            context = {'p_form': p_form,'user_type_form':user_type_form}
-            return render(request, 'users/profilehospital.html', context)
         elif(request.user.profile.user_type=="Infirmary"):
             user_type_form =InfirmaryForm(instance = request.user.infirmary)
-            context = {'p_form': p_form,'user_type_form':user_type_form}
-            return render(request, 'users/profileinf.html', context)
         elif(request.user.profile.user_type=="InsuranceCompany"):
             user_type_form =InsuranceCompanyForm(instance = request.user.insurancecompany)
-            context = {'p_form': p_form,'user_type_form':user_type_form}
-            return render(request, 'users/profileins.html', context)
+
+        context = {'p_form': p_form,'user_type_form':user_type_form}
+        return render(request, 'users/profile.html', context)    
 
 
 
@@ -167,7 +162,6 @@ def get_user_type(request):
 def after_login(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
-    
     try:
         if(request.user.profile.user_type_decided):
             return redirect('profile')
@@ -181,11 +175,12 @@ def after_login(request):
             otp=random.randint(1000,9999)
             request.session['otp'] = otp
             email = str(request.user.email_id)
-            s = smtplib.SMTP('smtp.gmail.com', 587)
-            s.starttls()
-            s.login("agarg19030@gmail.com", "kgsbxtxqjjtoddwk")
-            s.sendmail("msg", email,"your otp is"+ str(otp))
-            print("Success")
+            # s = smtplib.SMTP('smtp.gmail.com', 587)
+            # s.starttls()
+            # s.login("agarg19030@gmail.com", "kgsbxtxqjjtoddwk")
+            # s.sendmail("msg", email,"your otp is"+ str(otp))
+            # print("Success")
+            print("OTP is ",str(otp))
         except Exception as e:
             print(e)
             return redirect('login')
@@ -258,7 +253,6 @@ def getDocsH(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     docsAll = ViewAccess.objects.filter(user=request.user)
-    print(docsAll[0].document.patient.fullname)
     return render (request,"users/getDocsH.html",{'docs':docsAll})
 
 
