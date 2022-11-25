@@ -300,31 +300,7 @@ def get_insurancecompanies(request):
     insurancecompanies = myFilter.qs
     return render (request,"users/get_insurancecompanies.html",{'insurancecompanies':insurancecompanies,'myFilter':myFilter})
 
-
-def upload_medical_doc_p(request): 
-    emailsp = request.session["user"]
-    request.user = User_Auth.objects.filter(email_id = emailsp)[0]
-    print("hello")
-    if request.method=='POST':
-        print(request.POST)
-        form = MedicalDocumentsForm(request.POST,request.FILES)
-        if form.is_valid():
-            obj = form.save(commit=False)
-            obj.owner= request.user
-            obj.save()
-            return redirect('upload_medical_doc_p')
-    else:
-        form = MedicalDocumentsForm()
-    docs = MedicalDocuments.objects.filter(owner=request.user)
-    print(docs)
-    return render(request, 'users/upload_medical_doc.html', {'form': form,'docs':docs})
-
-
-
-    
-
-
-def upload_medical_doc_h(request):
+def upload_medical_doc(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     if request.method=='POST':
@@ -332,9 +308,10 @@ def upload_medical_doc_h(request):
         if form.is_valid():
             obj = form.save(commit=False)
             obj.owner= request.user
-            obj.is_verified = True
+            if(request.user.profile.user_type=='Hospital'):
+                obj.is_verified = True
             obj.save()
-            return redirect('upload_medical_doc_h')
+            return redirect('upload_medical_doc')
     else:
         form = MedicalDocumentsForm()
     docs = MedicalDocuments.objects.filter(owner=request.user)
@@ -398,7 +375,7 @@ def delete_doc(request,doc_pk):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     MedicalDocuments.objects.get(pk=doc_pk).delete()
-    return redirect('upload_medical_doc_p')
+    return redirect('upload_medical_doc')
 
 
 #@loggin_required

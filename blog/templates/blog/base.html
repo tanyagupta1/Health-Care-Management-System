@@ -43,12 +43,12 @@
                         {% else %}
                         <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
                             {% if user.profile.user_type == "Patient" and user.patient.is_verified %}
-                            <a class="nav-item nav-link" href="{% url 'upload_medical_doc_p' %}">Upload Docs</a>
+                            <a class="nav-item nav-link" href="{% url 'upload_medical_doc' %}">Upload Docs</a>
                             <a class="nav-item nav-link" href="{% url 'get_hospitals' %}">Hospitals</a>
                             <a class="nav-item nav-link" href="{% url 'get_infirmaries' %}">Infirmaries</a>
                             <a class="nav-item nav-link" href="{% url 'get_insurancecompanies' %}">InsuranceCompanies</a>
                             {% elif user.profile.user_type == "Hospital" and user.hospital.is_verified %}
-                            <a class="nav-item nav-link" href="{% url 'upload_medical_doc_h' %}">Upload Docs</a>
+                            <a class="nav-item nav-link" href="{% url 'upload_medical_doc' %}">Upload Docs</a>
                             <a class="nav-item nav-link" href="{% url 'getDocsH' %}">Docs Shared with Me(H)</a>
                             <a class="nav-item nav-link" href="{% url 'view_share_requests' %}">Share Requests(H)</a>
                             {% elif user.profile.user_type == "Infirmary" and user.infirmary.is_verified %}
