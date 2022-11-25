@@ -307,15 +307,15 @@ def upload_medical_doc_p(request):
     print("hello")
     if request.method=='POST':
         print(request.POST)
-        form = MedicalDocumentsFormPatient(request.POST,request.FILES)
+        form = MedicalDocumentsForm(request.POST,request.FILES)
         if form.is_valid():
             obj = form.save(commit=False)
-            obj.patient= request.user.patient
+            obj.owner= request.user
             obj.save()
             return redirect('upload_medical_doc_p')
     else:
-        form = MedicalDocumentsFormPatient()
-    docs = MedicalDocuments.objects.filter(patient=request.user.patient)
+        form = MedicalDocumentsForm()
+    docs = MedicalDocuments.objects.filter(owner=request.user)
     print(docs)
     return render(request, 'users/upload_medical_doc.html', {'form': form,'docs':docs})
 
@@ -328,16 +328,16 @@ def upload_medical_doc_h(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     if request.method=='POST':
-        form = MedicalDocumentsFormHospital(request.POST,request.FILES)
+        form = MedicalDocumentsForm(request.POST,request.FILES)
         if form.is_valid():
             obj = form.save(commit=False)
-            obj.hospital= request.user.hospital
+            obj.owner= request.user
             obj.is_verified = True
             obj.save()
             return redirect('upload_medical_doc_h')
     else:
-        form = MedicalDocumentsFormHospital()
-    docs = MedicalDocuments.objects.filter(hospital=request.user.hospital)
+        form = MedicalDocumentsForm()
+    docs = MedicalDocuments.objects.filter(owner=request.user)
     return render(request, 'users/upload_medical_doc.html', {'form': form,'docs':docs})
 
 # #@loggin_required

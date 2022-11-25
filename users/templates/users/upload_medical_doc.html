@@ -4,9 +4,9 @@
 <div>
 <table border="1">
     <tr>
-        <th>Patient</th>
+        <!-- <th>Patient</th> -->
         <th>Doc</th>
-        <th>Hospital</th>
+        <!-- <th>Hospital</th> -->
         <th>is_verified</th>
         <th>share button</th>
         <th>Delete </th>
@@ -14,11 +14,15 @@
 {% for ic in docs %}
 
 <tr>
-    <td>{{ic.patient}}</td>
+    <!-- <td>{{ic.patient}}</td> -->
     <td><a href="{{ic.medical_doc.url}}">{{ic.medical_doc.url}}</a></td>
-    <td>{{ic.hospital}}</td>
+    <!-- <td>{{ic.hospital}}</td> -->
     <td>{{ic.is_verified}}</td>
+    {% if ic.is_verified %}
     <td><a href = "{% url 'ShareDocP' ic.pk %}">Share</a></td>
+    {% else %}
+    <td>Not shareable </td>
+    {% endif %}
     <td><a href = "{% url 'delete_doc' ic.pk %}">Delete</a></td>
     
 </tr>
