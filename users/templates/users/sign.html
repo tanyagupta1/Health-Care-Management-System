@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IBC</title>
+    <!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css"> -->
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>
+    <!-- <script src='node_modules/web3/dist/web3.min.js'></script> -->
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@0.18.2/dist/web3.min.js"></script>
+    <!-- Web3= -->
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        #p{
+            padding-top: 17%;
+            margin-left: 30%;
+        }
+        #heading{
+            float: left;
+            height: 150px;
+            width: 100%;
+            /* border: 1px solid black; */
+            background-color: lightskyblue;
+            margin-bottom: 5%;
+        }
+        #e{
+            text-align: center;
+            font-size: 60px;
+            color: rgb(84, 81, 81);
+            padding-top: 50px;
+        }
+        #t,#f{
+            flex-direction: row;
+            display: flex;
+        }
+       /* #f {
+           display: inline-block ;
+       } */
+        #t1{
+            width: 120px;
+            padding-bottom: 40px;
+        }
+        #to{
+            padding-top: 3px;
+            margin-top: -4px;
+            resize: none;
+            height: 23px;
+            /* padding-top: 2px; */
+            /* padding-bottom: 2px; */
+            width: 41%;
+            font-size: 16px;
+        }
+        #t2{
+            font-size: 16px;
+            resize: none;
+            width: 41%;
+            /* margin-top: -4px; */
+            padding-top: 2px;
+        }
+        #b {
+            font-size: 30px;
+            background-color: rgb(40, 255, 183);
+            border-radius: 10px;
+            border: none;
+            text-align: center;
+            width: 550px;
+            height: 50px;
+            margin-top: 60px;
+            margin-left: 0%;
+            cursor: pointer;
+        }
+        #b:hover{
+            background-color:greenyellow;
+        }
+        .footer{
+            margin-top: 12%;
+            font-size: 20px;
+            text-align: center;
+            height: 52.5px;
+            width: 100%;
+            background-color: rgb(95, 93, 93);
+            padding-top: 30px;
+
+        }
+        .footer a{
+            padding-left: 10px;
+            padding-right: 10px;
+            text-decoration: none;
+            color: white;
+
+        }
+
+    </style>
+</head>
+<body>
+    <div id="heading">
+        <p id="e"></p>
+        <!-- 0x613518658FdA28FE37879391e23A2fC53375c865 -->
+    </div>
+
+    <div id="p">
+        <div id="f">
+            <h4 id="t1">From: </h4><p id="f2">0x613518658FdA28FE37879391e23A2fC53375c865</p>
+        </div>
+        <div id="t">
+            <h4 id="t1">To: </h4>
+            <textarea name="to" id="to" cols="80" rows="1" placeholder="Address" required></textarea>
+        </div>
+        <div id="t">
+            <h4 id="t1">Message: </h4>
+            <textarea name="" id="t2" cols="80" rows="5" placeholder="Message" required></textarea>
+        </div>
+        <input type="button" value="Submit" id="b">
+    </div>
+    <footer class="footer">
+      
+    </footer>
+    <script>
+        var address="";
+        var message="";
+
+        async function loadWeb3() {
+    if (window.ethereum) {
+        window.web3 = new Web3(window.ethereum);
+        window.ethereum.enable();
+    }
+}
+
+
+web3=new Web3(web3.currentProvider);
+
+async function loadContract() {
+    return await new window.web3.eth.Contract([
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"name": "hash",
+				"type": "string"
+			}
+		],
+		"name": "setDocID",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [{
+				"name": "id",
+				"type": "uint256"
+			}],
+		"name": "getDocumentHash",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+], '0xaeb8f6eadba21e5fefe63690708d30f0f9300fbb');
+}
+        $("#b").click(function() {
+            if($("#to").val()==""){
+                alert("Please Enter Address!");
+                return;
+            }
+            else{
+                address=$("#to").val();
+            }
+            if($("#t2").val()==""){
+                alert("Please Enter Address!");
+                return;
+            }
+            else{
+                message=$("#t2").val();
+            }
+            // contract.methods.setMessage($("#to").val(), $("#t2").val());
+
+            add();
+        });
+        async function connectMetamask() {
+        window.ethereum.enable()
+            .then(async (rs) => {
+                setMyAccount(rs[0])
+                let balance = await web3.current.eth.getBalance(accounts[0]);
+                setBalance(web3.current.utils.fromWei(balance))
+            })
+    }
+    connectMetamask();
+        async function add(){
+            var to = $("#to").val();
+             var b = parseInt(to)
+            var message=$("#t2").val();
+            const accounts = await window.web3.eth.getAccounts();
+            
+            const account=accounts[0];
+            console.log(accounts);
+            // alert(typeof(account))
+            // console.log(to+" "+message);
+            // var c1=await window.contract.methods.getMessage().call();
+
+            // var c=await window.contract.methods.setDocID(b,message).send({from:account});
+            var d =await window.contract.methods.getDocumentHash(b).call();
+            console.log("hello")
+            console.log(d);     
+            // window.location.reload();
+        }
+        async function load() {
+            await loadWeb3();
+            window.contract = await loadContract();
+            // updateStatus('Ready!');
+        }
+
+
+load();
+    </script>
+
+</body>
+</html>
