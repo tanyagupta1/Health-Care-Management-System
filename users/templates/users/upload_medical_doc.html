@@ -5,21 +5,23 @@
 <table border="1">
     <tr>
         <!-- <th>Patient</th> -->
+        <th>ID</th>
         <th>Doc</th>
         <!-- <th>Hospital</th> -->
         <th>is_verified</th>
-        <th>share button</th>
+        <!-- <th>share button</th> -->
         <th>Delete </th>
       </tr>
 {% for ic in docs %}
 
 <tr>
     <!-- <td>{{ic.patient}}</td> -->
+    <td>{{ic.pk}}</td>
     <td><a href="{{ic.medical_doc.url}}">{{ic.medical_doc.url}}</a></td>
     <!-- <td>{{ic.hospital}}</td> -->
     <td>{{ic.is_verified}}</td>
     {% if ic.is_verified %}
-    <td><a href = "{% url 'ShareDocP' ic.pk %}">Share</a></td>
+    <!-- <td><a href = "{% url 'ShareDocP' ic.pk %}">Share</a></td> -->
     {% else %}
     <td>Not shareable </td>
     {% endif %}
@@ -37,7 +39,16 @@
    
         {{form|crispy}}
     <div class="form-group">
-        <button class="btn btn-outline-info">Update</button>
+        <button class="btn btn-outline-info" name="upload_doc">Update</button>
+    </div>
+</form>
+
+
+<form method = "POST" >
+    {% csrf_token %}
+        {{form2|crispy}}
+    <div class="form-group">
+        <button class="btn btn-outline-info" name="share">Share</button>
     </div>
 </form>
 {% endblock content %}

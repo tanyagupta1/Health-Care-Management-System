@@ -71,3 +71,9 @@ class InsuranceRefundForm(forms.ModelForm):
     class Meta:
       model = InsuranceRefund
       fields = ['doc','refund_amount']
+
+
+class ViewAccessForm(forms.ModelForm):
+    class Meta:
+      model = ViewAccess
+      fields = ['document','user']
