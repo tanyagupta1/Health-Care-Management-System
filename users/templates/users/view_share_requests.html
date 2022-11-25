@@ -1,0 +1,25 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1>List of Documents {{user.profile.user_type}}</h1>
+<div>
+
+</div>
+<div>
+<table border="1">
+    <tr>
+        <th>Patient </th>
+        
+        
+      </tr>
+{% for req in share_requests %}
+
+<tr>
+    <td>{{req.patient.fullname}}</td>
+</tr>
+
+{% endfor %}
+</table>
+
+</div>
+{% endblock content %}

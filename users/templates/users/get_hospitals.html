@@ -1,4 +1,4 @@
-{% extends "blog/try.html" %}
+{% extends "blog/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
 
@@ -15,6 +15,7 @@
         <th>Name</th>
         <th>Phone Number</th>
         <th>Location</th>
+        <th></th>
       </tr>
 {% for hospital in hospitals %}
 
@@ -22,6 +23,13 @@
     <td>{{hospital.fullname}}</td>
     <td>{{hospital.mobile_number}}</td>
     <td>{{hospital.location}}</td>
+    <td>
+        <form  method="post">
+        {% csrf_token %}
+        <input id="hospital_pk" type="text" name="hospital_pk" hidden value = {{hospital.pk}}  >
+        <input type="submit" value="Request doc">
+        </form>
+    </td>
 </tr>
 
 {% endfor %}

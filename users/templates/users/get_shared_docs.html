@@ -1,24 +1,22 @@
-{% extends "blog/hospital.html" %}
+{% extends "blog/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-<h1>List of Documents</h1>
+<h1>List of Documents {{user.profile.user_type}}</h1>
 <div>
 
 </div>
 <div>
 <table border="1">
     <tr>
-        <th>Patient </th>
+        <th>pk</th>
         <th>Document</th>
-        
-      </tr>
+    </tr>
 {% for doc in docs %}
 
 <tr>
-    <td>{{doc.document.patient.fullname}}</td>
+    <td>{{doc.document.pk}}</td>
     <td><a href="{{doc.document.medical_doc.url}}">{{doc.document.medical_doc.url}}</a></td>
     
-
 </tr>
 
 {% endfor %}

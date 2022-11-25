@@ -1,4 +1,4 @@
-{% extends "blog/infirmary.html" %}
+{% extends "blog/base.html" %}
 
 
 {% load crispy_forms_tags %}
@@ -9,7 +9,7 @@
       <img class="rounded-circle account-img" src="{{ user.profile.image.url }}">
       <div class="media-body">
         <h2 class="account-heading">{{ user.username }}</h2>
-        <p class="text-secondary">{{ user.email }}</p>
+        <p class="text-secondary">{{ user.email_id }}</p>
         {% if user.profile.user_type == "Patient" %}
         <a href="{{ user.patient.verification_doc.url }}">Document url</a>
         <p class="text-secondary">Verification Status: {{ user.patient.is_verified }}</p>
@@ -33,7 +33,7 @@
         {% csrf_token %}
         <fieldset class="form-group">
             <legend class="border-bottom mb-4">Profile Info</legend>
-            {{u_form|crispy}}
+            <!-- {{u_form|crispy}} -->
             {{p_form|crispy}}
             {{user_type_form|crispy}}
         </fieldset>
