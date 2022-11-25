@@ -81,6 +81,7 @@ class MedicalDocuments(models.Model):
     owner = models.ForeignKey(User_Auth,on_delete=models.CASCADE,null=True)
     medical_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
     is_verified = models.BooleanField(default=False,null=True) 
+    verifier = models.ForeignKey(Hospital,on_delete=models.CASCADE,null=True)
     def __str__(self):
         return f'{self.owner} Medical Doc'
 

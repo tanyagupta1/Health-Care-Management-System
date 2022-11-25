@@ -60,7 +60,7 @@ class InsuranceCompanyForm(forms.ModelForm):
 class MedicalDocumentsForm(forms.ModelForm):
     class Meta:
       model = MedicalDocuments
-      fields = ['medical_doc']
+      fields = ['medical_doc','verifier']
 
 class InfirmaryOrderForm(forms.ModelForm):
     class Meta:
