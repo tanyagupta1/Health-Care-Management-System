@@ -11,7 +11,7 @@ class User_Auth(models.Model):
     email_id = models.CharField(default='na', max_length = 200 , primary_key=True)
     password_hash = models.CharField(default='na', max_length = 512)
     is_authenticated = models.BooleanField(default=True)
-
+    
     def __str__(self):
         return f'{self.email_id} User_Password'
 
