@@ -328,7 +328,7 @@ def place_infirmary_order(request,inf_pk):
             print(form.errors.as_data())
 
     form = InfirmaryOrderForm()
-    l1 = list(ViewAccess.objects.filter(user__pk='hos1@gmail.com').values_list('document',flat=True))
+    l1 = list(ViewAccess.objects.filter(user__pk=request.user.pk).values_list('document',flat=True))
     form.fields['doc'].queryset = MedicalDocuments.objects.filter(pk__in = l1)
     
     return render(request, 'users/place_infirmary_order.html', {'form': form})
@@ -347,7 +347,9 @@ def request_insurance_refund(request,insurance_pk):
             return redirect('get_insurancecompanies')
 
     form = InsuranceRefundForm()
-    form.fields['doc'].queryset = MedicalDocuments.objects.filter(patient=request.user.patient)
+    l1 = list(ViewAccess.objects.filter(user__pk=request.user.pk).values_list('document',flat=True))
+    form.fields['doc'].queryset = MedicalDocuments.objects.filter(pk__in = l1)
+
     return render(request, 'users/request_insurance_refund.html', {'form': form})
 
 #@loggin_required
