@@ -294,7 +294,7 @@ def get_insurancecompanies(request):
 def upload_medical_doc(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
-    if request.method=='POST':
+    if request.method=='POST' and 'upload_doc' in request.POST:
         form = MedicalDocumentsForm(request.POST,request.FILES)
         if form.is_valid():
             obj = form.save(commit=False)
@@ -305,12 +305,18 @@ def upload_medical_doc(request):
             ViewAccess.objects.create(document = obj,user=obj.owner)
             if(request.user.profile.user_type=='Patient'):
                 ViewAccess.objects.create(document = obj,user=obj.verifier.user)
-
+            return redirect('upload_medical_doc')
+    elif request.method=='POST' and 'share' in request.POST:
+        form = ViewAccessForm(request.POST)
+        if form.is_valid():
+            form.save()
             return redirect('upload_medical_doc')
     else:
         form = MedicalDocumentsForm()
+        form2 = ViewAccessForm()
+        form2.fields['document'].queryset = MedicalDocuments.objects.filter(is_verified=True,owner=request.user)
     docs = MedicalDocuments.objects.filter(owner=request.user)
-    return render(request, 'users/upload_medical_doc.html', {'form': form,'docs':docs})
+    return render(request, 'users/upload_medical_doc.html', {'form': form,'docs':docs,'form2':form2 })
 
 # #@loggin_required
 def place_infirmary_order(request,inf_pk):
