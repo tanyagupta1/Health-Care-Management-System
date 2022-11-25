@@ -29,7 +29,7 @@ class UserTypeForm(forms.Form):
 
 class LoginForm(forms.Form):
     email = forms.CharField(label='email', max_length=100)
-    password  = forms.CharField(label='Password', max_length=10)
+    password  = forms.CharField(label='Password',widget=forms.PasswordInput())
     
 
 class OtpForm(forms.Form):
