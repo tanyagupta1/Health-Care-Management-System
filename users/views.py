@@ -27,8 +27,8 @@ def register(request):
             return redirect('login')
     else:
         form = UserRegisterForm()
-    return render(request , "users/sign.html")
-    # return render(request,'users/register.html',{'form':form})
+    # return render(request , "users/sign.html")
+    return render(request,'users/register.html',{'form':form})
 
 
 def login(request):
@@ -146,13 +146,13 @@ def get_user_type(request):
             request.user.profile.user_type = user_type
             request.user.profile.save()
             if(user_type=="Patient"):
-                p1 = Patient.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=False)
+                p1 = Patient.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=True)
             elif(user_type=="Hospital"):
-                h1 = Hospital.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=False)
+                h1 = Hospital.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=True)
             elif(user_type=="Infirmary"):
-                i1 = Infirmary.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=False)
+                i1 = Infirmary.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=True)
             elif(user_type=="InsuranceCompany"):
-                ic1 = InsuranceCompany.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=False)
+                ic1 = InsuranceCompany.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=True)
             
             return redirect('verify')
     else:
