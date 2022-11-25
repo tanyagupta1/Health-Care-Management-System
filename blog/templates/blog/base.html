@@ -50,7 +50,7 @@
                             {% elif user.profile.user_type == "Hospital" %}
                             <a class="nav-item nav-link" href="{% url 'upload_medical_doc_h' %}">Upload Docs</a>
                             <a class="nav-item nav-link" href="{% url 'getDocsH' %}">Docs Shared with Me(H)</a>
-                            
+                            <a class="nav-item nav-link" href="{% url 'view_share_requests' %}">Share Requests(H)</a>
                             {% elif user.profile.user_type == "Infirmary" %}
                             <a class="nav-item nav-link" href="{% url 'getDocsP' %}">Docs Shared with Me(IF)</a>
                             <a class="nav-item nav-link" href="{% url 'get_infirmary_orders' %}">Infirmary orders</a>

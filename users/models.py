@@ -108,3 +108,10 @@ class InsuranceRefund(models.Model):
     refund_amount= models.IntegerField(default=0,null=True)
     def __str__(self):
         return f'Insurance Refund'
+
+class DocRequestHospital(models.Model):
+    patient = models.ForeignKey(Patient,on_delete=models.CASCADE,null=True)
+    hospital = models.ForeignKey(Hospital,on_delete=models.CASCADE,null=True)
+    is_fulfilled = models.BooleanField(default=False,null=True)
+    def __str__(self):
+        return f'DocRequestHospital'

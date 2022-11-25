@@ -243,6 +243,11 @@ def ShareDocP(request , pk):
 def get_hospitals(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+    if request.method=='POST':
+        hospital_pk = request.POST["hospital_pk"]
+        print(hospital_pk)
+        print("hospital is: ",Hospital.objects.get(pk=hospital_pk))
+        DocRequestHospital.objects.create(patient=request.user.patient,hospital =Hospital.objects.get(pk=hospital_pk) )
     hospitals = Hospital.objects.all()
     myFilter = HospitalFilter(request.GET,queryset=hospitals)
     hospitals = myFilter.qs
@@ -407,3 +412,9 @@ def payback(request,refund_pk):
     refund_request.patient.save()
     InsuranceRefund.objects.get(pk=refund_pk).delete()
     return redirect('get_insurance_refund_requests')
+
+def view_share_requests(request):
+    emailsp = request.session["user"]
+    request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+    share_requests = DocRequestHospital.objects.filter(hospital=request.user.hospital)
+    return render (request,"users/view_share_requests.html",{'share_requests':share_requests})

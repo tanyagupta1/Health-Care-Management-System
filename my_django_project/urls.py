@@ -36,6 +36,9 @@ urlpatterns = [
     path('getDocsH/',user_views.getDocsH,name='getDocsH'),
     path('getDocsI/',user_views.getDocsI,name='getDocsI'),
     path('getDocsP/',user_views.getDocsP,name='getDocsP'),
+
+
+    path('view_share_requests/',user_views.view_share_requests,name='view_share_requests'),
     
 
     path('get_infirmaries/',user_views.get_infirmaries,name='get_infirmaries'),
