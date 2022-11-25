@@ -199,9 +199,10 @@ def doc_share_otp(request):
                 print("hahahah")
                 dockey = request.session.get('drt')
                 medDoc = MedicalDocuments.objects.filter(pk=dockey)[0]
+                print("USER KEY is ",str(userkey))
                 user2 = User_Auth.objects.filter(pk =userkey)[0]
                 h1 = ViewAccess.objects.create(document = medDoc,  user=user2)
-                return redirect('upload_medical_doc_p')
+                return redirect('upload_medical_doc')
                 
 
     form = OtpForm()
@@ -219,11 +220,12 @@ def ShareDocP(request , pk):
         try:
             otp=random.randint(1000,9999)
             request.session['otp'] = otp
-            email = str(request.user.email_id)
-            s = smtplib.SMTP('smtp.gmail.com', 587)
-            s.starttls()
-            s.login("agarg19030@gmail.com", "kgsbxtxqjjtoddwk")
-            s.sendmail("msg", email,"your otp is"+ str(otp))
+            # email = str(request.user.email_id)
+            # s = smtplib.SMTP('smtp.gmail.com', 587)
+            # s.starttls()
+            # s.login("agarg19030@gmail.com", "kgsbxtxqjjtoddwk")
+            # s.sendmail("msg", email,"your otp is"+ str(otp))
+            print("Share OTP is ",otp)
             print("Success")
             return redirect("doc_share_otp")
         except:
@@ -232,11 +234,13 @@ def ShareDocP(request , pk):
     hospitalsAll = Hospital.objects.all()
     infirmariesAll = Infirmary.objects.all()
     insurancecompaniesAll = InsuranceCompany.objects.all()
-    
+    patientsAll = Patient.objects.all()
+
     return render(request,"users/ShareDocP.html" , {
         "hospitalsAll" : hospitalsAll ,
         "infirmariesAll" :infirmariesAll , 
         "insurancecompaniesAll" : insurancecompaniesAll, 
+        "patientsAll" : patientsAll, 
     })
 
 
@@ -254,25 +258,11 @@ def get_hospitals(request):
     return render (request,"users/get_hospitals.html",{'hospitals':hospitals,'myFilter':myFilter})
 
 
-def getDocsH(request):
+def get_shared_docs(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     docsAll = ViewAccess.objects.filter(user=request.user)
-    return render (request,"users/getDocsH.html",{'docs':docsAll})
-
-
-def getDocsI(request):
-    emailsp = request.session["user"]
-    request.user = User_Auth.objects.filter(email_id = emailsp)[0]
-    docsAll = ViewAccess.objects.filter(user=request.user)
-    return render (request,"users/getDocsInsur.html",{'docs':docsAll})
-
-
-def getDocsP(request):
-    emailsp = request.session["user"]
-    request.user = User_Auth.objects.filter(email_id = emailsp)[0]
-    docsAll = ViewAccess.objects.filter(user=request.user)
-    return render (request,"users/getDocsI.html",{'docs':docsAll})
+    return render (request,"users/get_shared_docs.html",{'docs':docsAll})
 
 
 def get_infirmaries(request):

@@ -33,9 +33,8 @@ urlpatterns = [
     path('doc_share_otp/',user_views.doc_share_otp,name='doc_share_otp'),
     path('after_login/',user_views.after_login,name='after_login'),
     path('get_hospitals/',user_views.get_hospitals,name='get_hospitals'),
-    path('getDocsH/',user_views.getDocsH,name='getDocsH'),
-    path('getDocsI/',user_views.getDocsI,name='getDocsI'),
-    path('getDocsP/',user_views.getDocsP,name='getDocsP'),
+    path('get_shared_docs/',user_views.get_shared_docs,name='get_shared_docs'),
+    
 
 
     path('view_share_requests/',user_views.view_share_requests,name='view_share_requests'),
