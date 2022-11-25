@@ -301,6 +301,10 @@ def upload_medical_doc(request):
             if(request.user.profile.user_type=='Hospital'):
                 obj.is_verified = True
             obj.save()
+            ViewAccess.objects.create(document = obj,user=obj.owner)
+            if(request.user.profile.user_type=='Patient'):
+                ViewAccess.objects.create(document = obj,user=obj.verifier.user)
+
             return redirect('upload_medical_doc')
     else:
         form = MedicalDocumentsForm()

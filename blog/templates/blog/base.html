@@ -44,19 +44,19 @@
                         <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
                             {% if user.profile.user_type == "Patient" and user.patient.is_verified %}
                             <a class="nav-item nav-link" href="{% url 'upload_medical_doc' %}">Upload Docs</a>
-                            <a class="nav-item nav-link" href="{% url 'get_shared_docs' %}">Docs Shared with Me(P)</a>
+                            <a class="nav-item nav-link" href="{% url 'get_shared_docs' %}">Viewable Docs(P)</a>
                             <a class="nav-item nav-link" href="{% url 'get_hospitals' %}">Hospitals</a>
                             <a class="nav-item nav-link" href="{% url 'get_infirmaries' %}">Infirmaries</a>
                             <a class="nav-item nav-link" href="{% url 'get_insurancecompanies' %}">InsuranceCompanies</a>
                             {% elif user.profile.user_type == "Hospital" and user.hospital.is_verified %}
                             <a class="nav-item nav-link" href="{% url 'upload_medical_doc' %}">Upload Docs</a>
-                            <a class="nav-item nav-link" href="{% url 'get_shared_docs' %}">Docs Shared with Me(H)</a>
+                            <a class="nav-item nav-link" href="{% url 'get_shared_docs' %}">Viewable Docs(H)</a>
                             <a class="nav-item nav-link" href="{% url 'view_share_requests' %}">Share Requests(H)</a>
                             {% elif user.profile.user_type == "Infirmary" and user.infirmary.is_verified %}
-                            <a class="nav-item nav-link" href="{% url 'get_shared_docs' %}">Docs Shared with Me(IF)</a>
+                            <a class="nav-item nav-link" href="{% url 'get_shared_docs' %}">Viewable Docs(IF)</a>
                             <a class="nav-item nav-link" href="{% url 'get_infirmary_orders' %}">Infirmary orders</a>
                             {% elif user.profile.user_type == "InsuranceCompany" and user.insurancecompany.is_verified %}
-                            <a class="nav-item nav-link" href="{% url 'get_shared_docs' %}">Docs Shared with Me(IC)</a>
+                            <a class="nav-item nav-link" href="{% url 'get_shared_docs' %}">Viewable Docs(IC)</a>
                             <a class="nav-item nav-link" href="{% url 'get_insurance_refund_requests' %}">Refund requests</a>
                             {% endif %}
                             <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
