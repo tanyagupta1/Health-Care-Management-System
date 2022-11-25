@@ -8,11 +8,13 @@
 <div>
 <table border="1">
     <tr>
+        <th>pk</th>
         <th>Document</th>
     </tr>
 {% for doc in docs %}
 
 <tr>
+    <td>{{doc.document.pk}}</td>
     <td><a href="{{doc.document.medical_doc.url}}">{{doc.document.medical_doc.url}}</a></td>
     
 </tr>

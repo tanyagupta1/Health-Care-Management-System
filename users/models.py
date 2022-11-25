@@ -82,14 +82,14 @@ class MedicalDocuments(models.Model):
     medical_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
     is_verified = models.BooleanField(default=False,null=True) 
     def __str__(self):
-        return f'{self.owner.email_id} Medical Doc'
+        return f'{self.owner} Medical Doc'
 
 
 class ViewAccess(models.Model):
     document = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
     user = models.ForeignKey(User_Auth,on_delete=models.CASCADE,null=True)
     def __str__(self):
-        return "Access"
+        return f'{self.user.email_id} Access'
 
 class InfirmaryOrder(models.Model):
     patient = models.ForeignKey(Patient,on_delete=models.CASCADE,null=True)

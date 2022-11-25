@@ -324,9 +324,13 @@ def place_infirmary_order(request,inf_pk):
             request.user.patient.save()
             obj.infirmary.save()
             return redirect('get_infirmaries')
+        else:
+            print(form.errors.as_data())
 
     form = InfirmaryOrderForm()
-    form.fields['doc'].queryset = MedicalDocuments.objects.filter(patient=request.user.patient)
+    l1 = list(ViewAccess.objects.filter(user__pk='hos1@gmail.com').values_list('document',flat=True))
+    form.fields['doc'].queryset = MedicalDocuments.objects.filter(pk__in = l1)
+    
     return render(request, 'users/place_infirmary_order.html', {'form': form})
 
 # @login_required
