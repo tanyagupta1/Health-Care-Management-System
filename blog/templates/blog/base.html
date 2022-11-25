@@ -1,4 +1,4 @@
-{% load static %}
+<!-- {% load static %}
 <!doctype html>
 <html lang="en">
 
@@ -23,7 +23,7 @@
     <header class="site-header">
         <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
             <div class="container">
-                <a class="navbar-brand mr-4" href="{% url 'blog-home' %}">Django Blog</a>
+                <a class="navbar-brand mr-4" href="{% url 'blog-home' %}">HealthCare System</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
                     aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -45,6 +45,7 @@
                         {% elif user.profile.user_type == "Hospital" %}
                         <a class="nav-item nav-link" href="{% url 'upload_medical_doc_h' %}">Upload Docs</a>
                         <a class="nav-item nav-link" href="{% url 'getDocsH' %}">Docs Shared with Me(H)</a>
+                        
                         {% elif user.profile.user_type == "Infirmary" %}
                         <a class="nav-item nav-link" href="{% url 'getDocsP' %}">Docs Shared with Me(IF)</a>
                         <a class="nav-item nav-link" href="{% url 'get_infirmary_orders' %}">Infirmary orders</a>
@@ -52,6 +53,13 @@
                         <a class="nav-item nav-link" href="{% url 'getDocsI' %}">Docs Shared with Me(IC)</a>
                         <a class="nav-item nav-link" href="{% url 'get_insurance_refund_requests' %}">Refund requests</a>
                         {% endif %}
+<<<<<<< HEAD
+                        <a class="nav-item nav-link" href="{% url 'upload_medical_doc_p' %}">Upload Docs</a>
+                        <a class="nav-item nav-link" href="{% url 'get_hospitals' %}">Hospitals</a>
+                        <a class="nav-item nav-link" href="{% url 'get_infirmaries' %}">Infirmaries</a>
+                        <a class="nav-item nav-link" href="{% url 'get_insurancecompanies' %}">InsuranceCompanies</a>
+=======
+>>>>>>> 04148978acf87261ea4a38bc5be4bf4a0e266a89
                         <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
 
                         {% else %}
@@ -93,4 +101,4 @@
         crossorigin="anonymous"></script>
 </body>
 
-</html>
+</html> -->
