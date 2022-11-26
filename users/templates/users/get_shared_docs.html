@@ -8,23 +8,35 @@
 <div>
 <table border="1">
     <tr>
+        {% if user.profile.user_type == "Hospital" %}
         <th>url</th>
+        {%endif%}
+        
         <th>status</th>
+        {% if user.profile.user_type == "Patient" %}
         <th></th>
+        {%endif%}
         <th>id </th>
     </tr>
 {% for doc in docs %}
 
 <tr>
     <!-- <td>{{doc.document.pk}}</td> -->
+    {% if user.profile.user_type == "Hospital" %}
     <td><a href="{{doc.document.medical_doc.url}}">View Doc</a></td>
+        {%endif%}
+    
     {% if doc.document.is_verified %}
+
     <td>Verified</td>
+
+    {% if user.profile.user_type == "Patient" %}
     <td><form  method="post">
         {% csrf_token %}
         <input id="dis" type="text" name="dis" hidden value = {{doc.document.pk}}  >
         <input type="submit" value="view_doc" name = "view_doc">
         </form></td>
+    {%endif%}
 
     {% elif user.profile.user_type == "Hospital" %} 
     <td>
@@ -34,7 +46,10 @@
             <input type="submit" value="Verify">
         </form>
     </td>
+    {% if user.profile.user_type == "Patient" %}
+
     <td></td>
+    {%endif%}
        
     {% else %}
     <td>Not Verified</td>
