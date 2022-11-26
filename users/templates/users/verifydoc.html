@@ -114,6 +114,7 @@ async function loadContract() {
 
         async function getValue(x1){
             console.log("d ended")
+            
             var d =await window.contract.methods.getDocumentHash(x1).call();
             console.log(d);
             console.log("answer from d"); 
@@ -129,21 +130,27 @@ async function loadContract() {
         async function doall(x1 , x2){
             await connectMetamask();
     await load();
-    // await add(x1, x2);
+
     valX = await getValue(x1); 
-    $.ajax({
-      type: "POST",
-      url: "{% url 'sign' %}",
-      data :  { data: valX, idData : x1}, 
-      success: function(data){
-                console.log('response received');
-                window.location.href = "{% url 'check' %}";
-            }
-            });
+    if(valX == hashval){
+        console.log(true); 
+    }
+    else{
+        console.log(false); 
+    }
+    // $.ajax({
+    //   type: "POST",
+    //   url: "{% url 'sign' %}",
+    //   data :  { data: valX, idData : x1}, 
+    //   success: function(data){
+    //             console.log('response received');
+    //             window.location.href = "{% url 'check' %}";
+    //         }
+    //         });
 
 
 }
-// doall(parseInt(docid), hashval); 
+doall(parseInt("1"), hashval); 
 
     </script>
     </body>

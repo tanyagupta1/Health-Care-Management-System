@@ -287,9 +287,15 @@ def sign(request):
 def verifydoc(request): 
     ids = request.session["docccccd"]
     mydoc = MedicalDocuments.objects.filter(pk = ids)[0]
-    docurl = mydoc.medical_doc
+    docurl = str(mydoc.medical_doc.url)[1:]
     print(docurl)
-    return render(request , "users/verifydoc.html"); 
+    print(docurl)
+    h1 = ""
+    with open(docurl , "rb") as f:
+        encoded_string = base64.b64encode(f.read())
+        h1 =  hashlib.sha256(encoded_string).hexdigest()
+    print(h1)
+    return render(request , "users/verifydoc.html" , {"hash" : h1 , "doc" : ids }); 
 
 def get_shared_docs(request):
     emailsp = request.session["user"]
@@ -317,11 +323,10 @@ def get_shared_docs(request):
     docsAll = ViewAccess.objects.filter(user=request.user)
     return render (request,"users/get_shared_docs.html",{'docs':docsAll })
 
-@csrf_exempt
-def check(request):
-   
-    
 
+def check(request):
+    emailsp = request.session["user"]
+    request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     return render(request, "users/check.html");
 def get_infirmaries(request):
     emailsp = request.session["user"]
@@ -357,7 +362,7 @@ def upload_medical_doc(request):
             obj = form.save(commit=False)
             obj.owner= request.user
             if(request.user.profile.user_type=='Hospital'):
-                obj.is_verified = True
+                obj.is_verified = False
             obj.save()
             ViewAccess.objects.create(document = obj,user=obj.owner)
             if(request.user.profile.user_type=='Patient'):
