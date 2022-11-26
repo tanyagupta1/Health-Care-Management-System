@@ -372,10 +372,8 @@ def upload_medical_doc(request):
             return redirect('upload_medical_doc')
     else:
         form = MedicalDocumentsForm()
-        form2 = ViewAccessForm()
-        form2.fields['document'].queryset = MedicalDocuments.objects.filter(is_verified=True,owner=request.user)
     docs = MedicalDocuments.objects.filter(owner=request.user)
-    return render(request, 'users/upload_medical_doc.html', {'form': form,'docs':docs,'form2':form2 })
+    return render(request, 'users/upload_medical_doc.html', {'form': form,'docs':docs })
 
 def share_docs(request):
     emailsp = request.session["user"]
