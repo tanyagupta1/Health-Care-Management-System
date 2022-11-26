@@ -428,9 +428,11 @@ def place_infirmary_order(request,inf_pk):
             return redirect('get_infirmaries')
         else:
             print(form.errors.as_data())
-
+    infirmary_auth_pk = Infirmary.objects.get(pk=inf_pk).user.pk
     form = InfirmaryOrderForm()
-    l1 = list(ViewAccess.objects.filter(user__pk=request.user.pk).values_list('document',flat=True))
+    patient_access = list(ViewAccess.objects.filter(user__pk=request.user.pk).values_list('document',flat=True))
+    infirmary_access = list(ViewAccess.objects.filter(user__pk=infirmary_auth_pk).values_list('document',flat=True))
+    l1 = set(patient_access).intersection(infirmary_access)
     form.fields['doc'].queryset = MedicalDocuments.objects.filter(pk__in = l1)
     
     return render(request, 'users/place_infirmary_order.html', {'form': form})
