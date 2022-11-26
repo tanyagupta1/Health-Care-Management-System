@@ -199,13 +199,13 @@ def doc_share_otp(request):
             userkey = request.session.get('urt')
             otp = request.session.get('otp')
             if (str(otp) == str(form.cleaned_data.get('otp'))):
-                print("hahahah")
+                print("OTP matched")
                 dockey = request.session.get('drt')
                 medDoc = MedicalDocuments.objects.filter(pk=dockey)[0]
                 print("USER KEY is ",str(userkey))
                 user2 = User_Auth.objects.filter(pk =userkey)[0]
                 h1 = ViewAccess.objects.create(document = medDoc,  user=user2)
-                return redirect('upload_medical_doc')
+                return redirect('share_docs')
                 
 
     form = OtpForm()
@@ -317,6 +317,8 @@ def get_shared_docs(request):
     docsAll = ViewAccess.objects.filter(user=request.user)
     return render (request,"users/get_shared_docs.html",{'docs':docsAll })
 
+
+
 @csrf_exempt
 def check(request):
    
@@ -374,6 +376,36 @@ def upload_medical_doc(request):
         form2.fields['document'].queryset = MedicalDocuments.objects.filter(is_verified=True,owner=request.user)
     docs = MedicalDocuments.objects.filter(owner=request.user)
     return render(request, 'users/upload_medical_doc.html', {'form': form,'docs':docs,'form2':form2 })
+
+def share_docs(request):
+    emailsp = request.session["user"]
+    request.user = User_Auth.objects.filter(email_id = emailsp)[0]   
+    if request.method=='POST' and 'share' in request.POST:
+        form = ViewAccessForm(request.POST)
+        if form.is_valid():
+            # form.save()
+            # return redirect('share_docs')
+            print(form.cleaned_data)
+            request.session['urt'] = form.cleaned_data.get('user').pk
+            request.session['drt'] = form.cleaned_data.get('document').pk
+            try:
+                otp=random.randint(1000,9999)
+                request.session['otp'] = otp
+                # email = str(request.user.email_id)
+                # s = smtplib.SMTP('smtp.gmail.com', 587)
+                # s.starttls()
+                # s.login("agarg19030@gmail.com", "kgsbxtxqjjtoddwk")
+                # s.sendmail("msg", email,"your otp is"+ str(otp))
+                print("Share OTP is ",otp)
+                print("Success")
+                return redirect("doc_share_otp")
+            except:
+                pass
+
+    else:
+        form = ViewAccessForm()
+        form.fields['document'].queryset = MedicalDocuments.objects.filter(is_verified=True,owner=request.user)
+    return render(request, 'users/share_docs.html', {'form': form })
 
 # #@loggin_required
 def place_infirmary_order(request,inf_pk):

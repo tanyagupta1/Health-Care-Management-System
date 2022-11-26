@@ -56,13 +56,6 @@
 </form>
 
 
-<form method = "POST" >
-    {% csrf_token %}
-        {{form2|crispy}}
-    <div class="form-group">
-        <button class="btn btn-outline-info" name="share">Share</button>
-    </div>
-</form>
 {% endblock content %}
 <script>
 async function loadWeb3() {
