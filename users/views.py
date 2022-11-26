@@ -425,6 +425,16 @@ def place_infirmary_order(request,inf_pk):
             # print(request.user.patient.wallet,' ',obj.infirmary.wallet)
             request.user.patient.save()
             obj.infirmary.save()
+            file_loc = 'media/profile_pics/'+str(obj.pk)+'.txt'
+            f = open(file_loc, 'w')
+            f.writelines(str(form.cleaned_data.get('amount_paid')))
+            f.writelines('\n')
+            f.writelines(obj.description)
+            f.close()
+            doc_loc = 'profile_pics/'+str(obj.pk)+'.txt'
+            new_doc = MedicalDocuments.objects.create(owner=obj.infirmary.user,medical_doc=doc_loc,is_verified=True,verifier=None)
+            ViewAccess.objects.create(document = new_doc,user=request.user)
+            ViewAccess.objects.create(document = new_doc,user=obj.infirmary.user)
             return redirect('get_infirmaries')
         else:
             print(form.errors.as_data())

@@ -92,7 +92,7 @@ class ViewAccess(models.Model):
     document = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
     user = models.ForeignKey(User_Auth,on_delete=models.CASCADE,null=True)
     def __str__(self):
-        return f'{self.user.email_id} Access'
+        return f'{self.user.email_id} can access {self.document}'
 
 class InfirmaryOrder(models.Model):
     patient = models.ForeignKey(Patient,on_delete=models.CASCADE,null=True)
