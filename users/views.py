@@ -409,6 +409,7 @@ def share_docs(request):
         form.fields['user'].queryset = User_Auth.objects.exclude(pk=request.user.pk)
         if(request.user.profile.user_type=='Hospital'):
             form.fields['user'].queryset = User_Auth.objects.filter(profile__user_type='Patient')
+            form.fields['document'].queryset = MedicalDocuments.objects.filter(owner=request.user)
     return render(request, 'users/share_docs.html', {'form': form })
 
 # #@loggin_required
