@@ -373,6 +373,8 @@ def upload_medical_doc(request):
     else:
         form = MedicalDocumentsForm()
     docs = MedicalDocuments.objects.filter(owner=request.user)
+    if(request.user.profile.user_type=='Hospital'):
+        form.fields['verifier'].queryset = Hospital.objects.filter(pk=request.user.hospital.pk)
     return render(request, 'users/upload_medical_doc.html', {'form': form,'docs':docs })
 
 def share_docs(request):
