@@ -16,7 +16,7 @@
 
 <tr>
     <!-- <td>{{doc.document.pk}}</td> -->
-    <td><a href="{{doc.document.medical_doc.url}}">{{doc.document.medical_doc.url}}</a></td>
+    <td><a href="{{doc.document.medical_doc.url}}">View Doc</a></td>
     {% if doc.document.is_verified %}
     <td>Verified</td>
     <td><form  method="post">
@@ -35,9 +35,10 @@
     </td>
        
     {% else %}
-    <td>Not Verified</td>S
+    <td>Not Verified</td>
     
     {% endif %}
+    <td>{{doc.document.unique_id}}</td>
     
    
 </tr>
@@ -46,13 +47,5 @@
 </table>
 
 
-<form method = "POST" enctype="multipart/form-data">
-    {% csrf_token %}
-   
-        {{form|crispy}}
-    <div class="form-group">
-        <button class="btn btn-outline-info" name="upload_doc">Update</button>
-    </div>
-</form>
 </div>
 {% endblock content %}

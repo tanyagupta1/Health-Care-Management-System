@@ -34,7 +34,7 @@ urlpatterns = [
     path('after_login/',user_views.after_login,name='after_login'),
     path('get_hospitals/',user_views.get_hospitals,name='get_hospitals'),
     path('get_shared_docs/',user_views.get_shared_docs,name='get_shared_docs'),
-    
+    path('share_docs/',user_views.share_docs,name='share_docs'),
 
 
     path('view_share_requests/',user_views.view_share_requests,name='view_share_requests'),

@@ -199,13 +199,13 @@ def doc_share_otp(request):
             userkey = request.session.get('urt')
             otp = request.session.get('otp')
             if (str(otp) == str(form.cleaned_data.get('otp'))):
-                print("hahahah")
+                print("OTP matched")
                 dockey = request.session.get('drt')
                 medDoc = MedicalDocuments.objects.filter(pk=dockey)[0]
                 print("USER KEY is ",str(userkey))
                 user2 = User_Auth.objects.filter(pk =userkey)[0]
                 h1 = ViewAccess.objects.create(document = medDoc,  user=user2)
-                return redirect('upload_medical_doc')
+                return redirect('share_docs')
                 
 
     form = OtpForm()
@@ -324,6 +324,11 @@ def get_shared_docs(request):
     return render (request,"users/get_shared_docs.html",{'docs':docsAll })
 
 
+
+
+   
+    
+
 def check(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
@@ -375,10 +380,42 @@ def upload_medical_doc(request):
             return redirect('upload_medical_doc')
     else:
         form = MedicalDocumentsForm()
-        form2 = ViewAccessForm()
-        form2.fields['document'].queryset = MedicalDocuments.objects.filter(is_verified=True,owner=request.user)
     docs = MedicalDocuments.objects.filter(owner=request.user)
-    return render(request, 'users/upload_medical_doc.html', {'form': form,'docs':docs,'form2':form2 })
+    if(request.user.profile.user_type=='Hospital'):
+        form.fields['verifier'].queryset = Hospital.objects.filter(pk=request.user.hospital.pk)
+    return render(request, 'users/upload_medical_doc.html', {'form': form,'docs':docs })
+
+def share_docs(request):
+    emailsp = request.session["user"]
+    request.user = User_Auth.objects.filter(email_id = emailsp)[0]   
+    if request.method=='POST' and 'share' in request.POST:
+        form = ViewAccessForm(request.POST)
+        if form.is_valid():
+            # form.save()
+            # return redirect('share_docs')
+            print(form.cleaned_data)
+            request.session['urt'] = form.cleaned_data.get('user').pk
+            request.session['drt'] = form.cleaned_data.get('document').pk
+            try:
+                otp=random.randint(1000,9999)
+                request.session['otp'] = otp
+                # email = str(request.user.email_id)
+                # s = smtplib.SMTP('smtp.gmail.com', 587)
+                # s.starttls()
+                # s.login("agarg19030@gmail.com", "kgsbxtxqjjtoddwk")
+                # s.sendmail("msg", email,"your otp is"+ str(otp))
+                print("Share OTP is ",otp)
+                print("Success")
+                return redirect("doc_share_otp")
+            except:
+                pass
+
+    else:
+        form = ViewAccessForm()
+        l1 = list(ViewAccess.objects.filter(user__pk=request.user.pk).values_list('document',flat=True))
+        form.fields['document'].queryset = MedicalDocuments.objects.filter(pk__in = l1,is_verified=True)
+        form.fields['user'].queryset = User_Auth.objects.exclude(pk=request.user.pk)
+    return render(request, 'users/share_docs.html', {'form': form })
 
 # #@loggin_required
 def place_infirmary_order(request,inf_pk):
@@ -399,9 +436,11 @@ def place_infirmary_order(request,inf_pk):
             return redirect('get_infirmaries')
         else:
             print(form.errors.as_data())
-
+    infirmary_auth_pk = Infirmary.objects.get(pk=inf_pk).user.pk
     form = InfirmaryOrderForm()
-    l1 = list(ViewAccess.objects.filter(user__pk=request.user.pk).values_list('document',flat=True))
+    patient_access = list(ViewAccess.objects.filter(user__pk=request.user.pk).values_list('document',flat=True))
+    infirmary_access = list(ViewAccess.objects.filter(user__pk=infirmary_auth_pk).values_list('document',flat=True))
+    l1 = set(patient_access).intersection(infirmary_access)
     form.fields['doc'].queryset = MedicalDocuments.objects.filter(pk__in = l1)
     
     return render(request, 'users/place_infirmary_order.html', {'form': form})
@@ -419,8 +458,14 @@ def request_insurance_refund(request,insurance_pk):
             obj.save()
             return redirect('get_insurancecompanies')
 
+    
+    insurance_auth_pk = InsuranceCompany.objects.get(pk=insurance_pk).user.pk
     form = InsuranceRefundForm()
-    l1 = list(ViewAccess.objects.filter(user__pk=request.user.pk).values_list('document',flat=True))
+    patient_access = list(ViewAccess.objects.filter(user__pk=request.user.pk).values_list('document',flat=True))
+    insurance_access = list(ViewAccess.objects.filter(user__pk=insurance_auth_pk).values_list('document',flat=True))
+    print(patient_access)
+    print(insurance_access)
+    l1 = set(patient_access).intersection(insurance_access)
     form.fields['doc'].queryset = MedicalDocuments.objects.filter(pk__in = l1)
 
     return render(request, 'users/request_insurance_refund.html', {'form': form})

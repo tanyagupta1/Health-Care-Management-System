@@ -20,8 +20,8 @@
 
 <tr>
     <!-- <td>{{ic.patient}}</td> -->
-    <td>{{ic.pk}}</td>
-    <td><a href="{{ic.medical_doc.url}}">View doc</a></td>
+    <td>{{ic.unique_id}}</td>
+    <td><a href="{{ic.medical_doc.url}}">{{ic.medical_doc.url}}</a></td>
     <!-- <td>{{ic.hospital}}</td> -->
     <td>{{ic.is_verified}}</td>
     {% if ic.is_verified %}
@@ -48,13 +48,6 @@
 </form>
 
 
-<form method = "POST" >
-    {% csrf_token %}
-        {{form2|crispy}}
-    <div class="form-group">
-        <button class="btn btn-outline-info" name="share">Share</button>
-    </div>
-</form>
 {% endblock content %}
 
 

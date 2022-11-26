@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import uuid
 # Create your models here
 # 
 # 
@@ -78,12 +79,13 @@ class InsuranceCompany(models.Model):
 
 
 class MedicalDocuments(models.Model):
+    unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     owner = models.ForeignKey(User_Auth,on_delete=models.CASCADE,null=True)
     medical_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
     is_verified = models.BooleanField(default=False,null=True) 
     verifier = models.ForeignKey(Hospital,on_delete=models.CASCADE,null=True)
     def __str__(self):
-        return f'{self.owner} Medical Doc'
+        return f'{self.unique_id} Medical Doc'
 
 
 class ViewAccess(models.Model):
@@ -110,11 +112,12 @@ class InsuranceRefund(models.Model):
         return f'Insurance Refund'
 
 class DocRequestHospital(models.Model):
+    unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     patient = models.ForeignKey(Patient,on_delete=models.CASCADE,null=True)
     hospital = models.ForeignKey(Hospital,on_delete=models.CASCADE,null=True)
     is_fulfilled = models.BooleanField(default=False,null=True)
     def __str__(self):
-        return f'DocRequestHospital'
+        return f'{self.unique_id} Doc request'
 
 class RequestModel(models.Model):
     document = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
