@@ -1,4 +1,4 @@
-{% extends "blog/try.html" %}
+{% extends "blog/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
 
@@ -15,6 +15,7 @@
         <th>Name</th>
         <th>Phone Number</th>
         <th>Location</th>
+        <th></th>
       </tr>
 {% for hospital in hospitals %}
 
@@ -22,10 +23,49 @@
     <td>{{hospital.fullname}}</td>
     <td>{{hospital.mobile_number}}</td>
     <td>{{hospital.location}}</td>
+    <td>
+        <form  method="post">
+        {% csrf_token %}
+        <input id="hospital_pk" type="text" name="hospital_pk" hidden value = {{hospital.pk}}  >
+        <input type="submit" value="Request doc">
+        </form>
+    </td>
 </tr>
 
 {% endfor %}
 </table>
 
 </div>
+
+------------------------------------------
+
+
+<div>
+    <h4 margin="10">All reuqests </h4>
+    <table border="1">
+        <tr>
+            <th>Requestid</th>
+            <th>hospital</th>
+            <th>status</th>
+            
+          </tr>
+    
+    {% for req in allreq %}
+    
+    <tr>
+        <td>{{req.unique_id}}</td>
+        <td>{{req.hospital.fullname}}</td>
+        {% if req.is_fulfilled %}
+        <td>Fulfilled</td>
+        {% else %}
+        <td>Under process</td>
+
+        {% endif %}
+        
+    </tr>
+    
+    {% endfor %}
+    </table>
+    
+    </div>
 {% endblock content %}

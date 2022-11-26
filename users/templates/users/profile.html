@@ -1,0 +1,46 @@
+{% extends "blog/base.html" %}
+
+
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="content-section">
+    <div class="media">
+      <img class="rounded-circle account-img" src="{{ user.profile.image.url }}">
+      <div class="media-body">
+        <h2 class="account-heading">{{ user.username }}</h2>
+        <p class="text-secondary">{{ user.email_id }}</p>
+        {% if user.profile.user_type == "Patient" %}
+        <a href="{{ user.patient.verification_doc.url }}">Document url</a>
+        <p class="text-secondary">Verification Status: {{ user.patient.is_verified }}</p>
+        <p class="text-secondary">Wallet: {{ user.patient.wallet }}</p>
+        {% elif user.profile.user_type == "Hospital" %}
+        <a href="{{ user.hospital.verification_doc.url }}">Document url</a>
+        <p class="text-secondary">Verification Status: {{ user.hospital.is_verified }}</p>
+        {% elif user.profile.user_type == "Infirmary" %}
+        <a href="{{ user.infirmary.verification_doc.url }}">Document url</a>
+        <p class="text-secondary">Verification Status: {{ user.infirmary.is_verified }}</p>
+        <p class="text-secondary">Wallet: {{ user.infirmary.wallet}}</p>
+        {% elif user.profile.user_type == "InsuranceCompany" %}
+        <a href="{{ user.insurancecompany.verification_doc.url }}">Document url</a>
+        <p class="text-secondary">Verification Status: {{ user.insurancecompany.is_verified }}</p>
+        <p class="text-secondary">Wallet: {{ user.insurancecompany.wallet }}</p>
+        {% endif %}
+      </div>
+    </div>
+    <!-- FORM HERE -->
+    <form method = "POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Profile Info</legend>
+            <!-- {{u_form|crispy}} -->
+            {{p_form|crispy}}
+            {{user_type_form|crispy}}
+        </fieldset>
+        <div class="form-group">
+            <button class="btn btn-outline-info">Update</button>
+        </div>
+    </form>
+  </div>
+
+{% endblock content %}

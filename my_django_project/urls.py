@@ -33,15 +33,17 @@ urlpatterns = [
     path('doc_share_otp/',user_views.doc_share_otp,name='doc_share_otp'),
     path('after_login/',user_views.after_login,name='after_login'),
     path('get_hospitals/',user_views.get_hospitals,name='get_hospitals'),
-    path('getDocsH/',user_views.getDocsH,name='getDocsH'),
-    path('getDocsI/',user_views.getDocsI,name='getDocsI'),
-    path('getDocsP/',user_views.getDocsP,name='getDocsP'),
-    
+    path('get_shared_docs/',user_views.get_shared_docs,name='get_shared_docs'),
+    path('share_docs/',user_views.share_docs,name='share_docs'),
 
+
+    path('view_share_requests/',user_views.view_share_requests,name='view_share_requests'),
+    path('verifydoc/',user_views.verifydoc,name='verifydoc'),
+    path('check/',user_views.check,name='check'),
+    path('sign/',user_views.sign,name='sign'),
     path('get_infirmaries/',user_views.get_infirmaries,name='get_infirmaries'),
     path('get_insurancecompanies/',user_views.get_insurancecompanies,name='get_insurancecompanies'),
-    path('upload_medical_doc_p/',user_views.upload_medical_doc_p,name='upload_medical_doc_p'),
-    path('upload_medical_doc_h/',user_views.upload_medical_doc_h,name='upload_medical_doc_h'), 
+    path('upload_medical_doc/',user_views.upload_medical_doc,name='upload_medical_doc'), 
     path('ShareDocP/<str:pk>/',user_views.ShareDocP,name='ShareDocP'),
     path('place_infirmary_order/<str:inf_pk>/',user_views.place_infirmary_order,name='place_infirmary_order'),
     path('request_insurance_refund/<str:insurance_pk>/',user_views.request_insurance_refund,name='request_insurance_refund'),

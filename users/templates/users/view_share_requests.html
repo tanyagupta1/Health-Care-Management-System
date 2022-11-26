@@ -1,0 +1,35 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1>List of unfulfilled requests {{user.profile.user_type}}</h1>
+<div>
+
+</div>
+<div>
+<table border="1">
+    <tr>
+        <th>Patient </th>
+        <th>request id</th>
+        
+      </tr>
+{% for req in share_requests %}
+
+<tr>
+    <td>{{req.patient.fullname}}</td>
+    <td>{{req.unique_id}}</td>
+</tr>
+
+
+{% endfor %}
+</table>
+
+<form method = "POST" enctype="multipart/form-data">
+    {% csrf_token %}
+   
+        {{form2|crispy}}
+    <div class="form-group">
+        <button class="btn btn-outline-info" name="fulfil_req">Fulfil request</button>
+    </div>
+</form>
+</div>
+{% endblock content %}

@@ -1,24 +1,36 @@
-{% extends "blog/hospital.html" %}
+{% extends "blog/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
+<htmL><head>
+
+  
+</head><body>
 <div>
 <table border="1">
     <tr>
-        <th>Patient</th>
+        <!-- <th>Patient</th> -->
+        <th>ID</th>
         <th>Doc</th>
-        <th>Hospital</th>
+        <!-- <th>Hospital</th> -->
         <th>is_verified</th>
-        <th>share button</th>
-        <th>Delete </th>
+        <!-- <th>share button</th> -->
+        <th>Shareable status </th>
+        <th>Delete</th>
       </tr>
 {% for ic in docs %}
 
 <tr>
-    <td>{{ic.patient}}</td>
+    <!-- <td>{{ic.patient}}</td> -->
+    <td>{{ic.unique_id}}</td>
     <td><a href="{{ic.medical_doc.url}}">{{ic.medical_doc.url}}</a></td>
-    <td>{{ic.hospital}}</td>
+    <!-- <td>{{ic.hospital}}</td> -->
     <td>{{ic.is_verified}}</td>
-    <td><a href = "{% url 'ShareDocP' ic.pk %}">Share</a></td>
+    {% if ic.is_verified %}
+    <td>shareable   </td>
+    <!-- <td><a href = "{% url 'ShareDocP' ic.pk %}">Share</a></td> -->
+    {% else %}
+    <td>Not shareable </td>
+    {% endif %}
     <td><a href = "{% url 'delete_doc' ic.pk %}">Delete</a></td>
     
 </tr>
@@ -33,7 +45,13 @@
    
         {{form|crispy}}
     <div class="form-group">
-        <button class="btn btn-outline-info">Update</button>
+        <button class="btn btn-outline-info" name="upload_doc">Update</button>
     </div>
 </form>
+
+
 {% endblock content %}
+
+
+
+</body></htmL>

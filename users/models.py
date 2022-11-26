@@ -1,8 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.validators import RegexValidator
-from .validators import validate_file_extension
-
+import uuid
 # Create your models here
 # 
 # 
@@ -13,7 +11,7 @@ from .validators import validate_file_extension
 class User_Auth(models.Model):
     email_id = models.CharField(default='na', max_length = 200 , primary_key=True)
     password_hash = models.CharField(default='na', max_length = 512)
-
+    is_authenticated = models.BooleanField(default=True)
 
     def __str__(self):
         return f'{self.email_id} User_Password'
@@ -81,19 +79,20 @@ class InsuranceCompany(models.Model):
 
 
 class MedicalDocuments(models.Model):
-    patient = models.ForeignKey(Patient,on_delete=models.CASCADE,null=True)
-    hospital = models.ForeignKey(Hospital,on_delete=models.CASCADE,null=True)
+    unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    owner = models.ForeignKey(User_Auth,on_delete=models.CASCADE,null=True)
     medical_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
     is_verified = models.BooleanField(default=False,null=True) 
+    verifier = models.ForeignKey(Hospital,on_delete=models.CASCADE,null=True)
     def __str__(self):
-        return f'{self.patient.fullname} {self.hospital.fullname} Medical Doc'
+        return f'{self.unique_id} Medical Doc'
 
 
 class ViewAccess(models.Model):
     document = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
     user = models.ForeignKey(User_Auth,on_delete=models.CASCADE,null=True)
     def __str__(self):
-        return "Access"
+        return f'{self.user.email_id} can access {self.document}'
 
 class InfirmaryOrder(models.Model):
     patient = models.ForeignKey(Patient,on_delete=models.CASCADE,null=True)
@@ -111,3 +110,17 @@ class InsuranceRefund(models.Model):
     refund_amount= models.IntegerField(default=0,null=True)
     def __str__(self):
         return f'Insurance Refund'
+
+class DocRequestHospital(models.Model):
+    unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    patient = models.ForeignKey(Patient,on_delete=models.CASCADE,null=True)
+    hospital = models.ForeignKey(Hospital,on_delete=models.CASCADE,null=True)
+    is_fulfilled = models.BooleanField(default=False,null=True)
+    def __str__(self):
+        return f'{self.unique_id} Doc request'
+
+class RequestModel(models.Model):
+    document = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
+    request = models.ForeignKey(DocRequestHospital,on_delete=models.CASCADE,null=True)
+    def __str__(self):
+        return f'Requestform'

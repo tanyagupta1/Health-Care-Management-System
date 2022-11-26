@@ -1,0 +1,53 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1>List of Documents {{user.profile.user_type}}</h1>
+<div>
+
+</div>
+<div>
+<table border="1">
+    <tr>
+        <th>url</th>
+        <th>status</th>
+        <th></th>
+        <th>id </th>
+    </tr>
+{% for doc in docs %}
+
+<tr>
+    <!-- <td>{{doc.document.pk}}</td> -->
+    <td><a href="{{doc.document.medical_doc.url}}">View Doc</a></td>
+    {% if doc.document.is_verified %}
+    <td>Verified</td>
+    <td><form  method="post">
+        {% csrf_token %}
+        <input id="dis" type="text" name="dis" hidden value = {{doc.document.pk}}  >
+        <input type="submit" value="view_doc" name = "view_doc">
+        </form></td>
+
+    {% elif user.profile.user_type == "Hospital" %} 
+    <td>
+        <form  method="post">
+            {% csrf_token %}
+            <input id="xyz" type="text" name="xyz" hidden value = {{doc.document.pk}}  >
+            <input type="submit" value="Verify">
+        </form>
+    </td>
+    <td></td>
+       
+    {% else %}
+    <td>Not Verified</td>
+    
+    {% endif %}
+    <td>{{doc.document.unique_id}}</td>
+    
+   
+</tr>
+
+{% endfor %}
+</table>
+
+
+</div>
+{% endblock content %}
