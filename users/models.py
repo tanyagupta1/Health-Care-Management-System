@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import RegexValidator
+from .validators import validate_file_extension
+
 # Create your models here
 # 
 # 
@@ -26,7 +29,7 @@ class Profile(models.Model):
 class Patient(models.Model):
     user = models.OneToOneField(User_Auth,on_delete=models.CASCADE)
     verification_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
-    fullname = models.CharField(max_length=200,null=True)
+    fullname = models.CharField(max_length=200,null=True, validators=[RegexValidator('[!@#$%^&*()_+-=~`[]{}|;\\\'",./<>?]', inverse_match=True)])
     mobile_number = models.IntegerField(null=True) 
     is_verified = models.BooleanField(default=False,null=True) # set true after document verification
     wallet = models.IntegerField(default=1000000,null=True)
@@ -35,9 +38,9 @@ class Patient(models.Model):
 
 class Hospital(models.Model):
     user = models.OneToOneField(User_Auth,on_delete=models.CASCADE)
-    verification_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
-    fullname = models.CharField(max_length=200,null=True)
-    location = models.CharField(default="Delhi",max_length=200,null=True)
+    verification_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True, validators=[validate_file_extension])
+    fullname = models.CharField(max_length=200,null=True, validators=[RegexValidator('[!@#$%^&*()_+-=~`[]{}|;\\\'",./<>?]', inverse_match=True)])
+    location = models.CharField(default="Delhi",max_length=200,null=True, validators=[RegexValidator('[!@#$%^&*()_+-=~`[]{}|;\\\'",./<>?]', inverse_match=True)])
     mobile_number = models.IntegerField(null=True) 
     is_verified = models.BooleanField(default=False,null=True) # set true after document verification
     description = models.TextField(default="na",null=True)
@@ -49,8 +52,8 @@ class Hospital(models.Model):
 class Infirmary(models.Model):
     user = models.OneToOneField(User_Auth,on_delete=models.CASCADE)
     verification_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
-    fullname = models.CharField(max_length=200,null=True)
-    location = models.CharField(default="Delhi",max_length=200,null=True)
+    fullname = models.CharField(max_length=200,null=True,validators=[RegexValidator('[!@#$%^&*()_+-=~`[]{}|;\\\'",./<>?]', inverse_match=True)])
+    location = models.CharField(default="Delhi",max_length=200,null=True,validators=[RegexValidator('[!@#$%^&*()_+-=~`[]{}|;\\\'",./<>?]', inverse_match=True)])
     mobile_number = models.IntegerField(null=True) 
     is_verified = models.BooleanField(default=False,null=True) # set true after document verification
     wallet = models.IntegerField(default=1000000,null=True)
@@ -63,8 +66,8 @@ class Infirmary(models.Model):
 class InsuranceCompany(models.Model):
     user = models.OneToOneField(User_Auth,on_delete=models.CASCADE)
     verification_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
-    fullname = models.CharField(max_length=200,null=True)
-    location = models.CharField(default="Delhi",max_length=200,null=True)
+    fullname = models.CharField(max_length=200,null=True,validators=[RegexValidator('[!@#$%^&*()_+-=~`[]{}|;\\\'",./<>?]', inverse_match=True)])
+    location = models.CharField(default="Delhi",max_length=200,null=True,validators=[RegexValidator('[!@#$%^&*()_+-=~`[]{}|;\\\'",./<>?]', inverse_match=True)])
     mobile_number = models.IntegerField(null=True) 
     is_verified = models.BooleanField(default=False,null=True) # set true after document verification
     description = models.TextField(default="na",null=True)

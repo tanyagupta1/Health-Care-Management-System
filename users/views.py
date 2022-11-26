@@ -80,6 +80,7 @@ def profile(request):
             return redirect('profile')
 
     else:
+        print(request.user.profile.user_type)
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)
         user_type_form=''

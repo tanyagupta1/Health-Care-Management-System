@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import *
+import hashlib
+
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
 
@@ -26,7 +28,7 @@ class ProfileUpdateForm(forms.ModelForm):
 
 class UserTypeForm(forms.Form):
     your_type = forms.CharField(label='Patient/Hospital/Infirmary/InsuranceCompany', max_length=100)
-    otp = forms.CharField(label='otp', max_length=10)
+    otp = forms.CharField(label='otp', max_length=10,widget= forms.TextInput(attrs={'class':'use-keyboard-input'}))
 
 
 class LoginForm(forms.Form):
