@@ -36,4 +36,36 @@
 </table>
 
 </div>
+
+------------------------------------------
+
+
+<div>
+    <h4 margin="10">All reuqests </h4>
+    <table border="1">
+        <tr>
+            <th>Requestid</th>
+            <th>hospital</th>
+            <th>status</th>
+            
+          </tr>
+    
+    {% for req in allreq %}
+    
+    <tr>
+        <td>{{req.unique_id}}</td>
+        <td>{{req.hospital.fullname}}</td>
+        {% if req.is_fulfilled %}
+        <td>Fulfilled</td>
+        {% else %}
+        <td>Under process</td>
+
+        {% endif %}
+        
+    </tr>
+    
+    {% endfor %}
+    </table>
+    
+    </div>
 {% endblock content %}

@@ -258,25 +258,21 @@ def get_hospitals(request):
     hospitals = Hospital.objects.all()
     myFilter = HospitalFilter(request.GET,queryset=hospitals)
     hospitals = myFilter.qs
-    return render (request,"users/get_hospitals.html",{'hospitals':hospitals,'myFilter':myFilter})
+
+    allrequests = DocRequestHospital.objects.filter(patient=request.user.patient)
+    print(allrequests)
+    return render (request,"users/get_hospitals.html",{'hospitals':hospitals,'myFilter':myFilter , "allreq" : allrequests})
 
 @csrf_exempt
 def sign(request):
     if request.method=='POST':
         id_data  = request.POST["idData"];
         hashVal = request.POST["data"];
-        id_data =3 
-
-        print(id_data)
-        print(hashVal)
         mydoc = MedicalDocuments.objects.filter(pk = id_data)[0]
         mydoc.is_verified = True
         mydoc.save()
-        print(mydoc)
-        print("hello")
-
-
         return redirect("check")
+    
     h1 = request.session['hash']
     docid = request.session['ids']
     return render(request , "users/sign.html" , {"hash" : h1 , "doc" : docid} )
@@ -288,8 +284,8 @@ def verifydoc(request):
     ids = request.session["docccccd"]
     mydoc = MedicalDocuments.objects.filter(pk = ids)[0]
     docurl = str(mydoc.medical_doc.url)[1:]
-    print(docurl)
-    print(docurl)
+    # print(docurl)
+    # print(docurl)
     h1 = ""
     with open(docurl , "rb") as f:
         encoded_string = base64.b64encode(f.read())
@@ -308,16 +304,16 @@ def get_shared_docs(request):
         return redirect("verifydoc")
         
     if request.method=='POST':
-        val = "media/profile_pics/q4.jpeg"
-        docid = 1 
-        print("i m here")
+        ids = request.POST["xyz"]
+        mydoc = MedicalDocuments.objects.filter(pk = ids)[0]
+        docurl = str(mydoc.medical_doc.url)[1:]
         h1 = ""
-        with open(val , "rb") as f:
+        with open(docurl , "rb") as f:
             encoded_string = base64.b64encode(f.read())
             h1 =  hashlib.sha256(encoded_string).hexdigest()
         
         request.session['hash'] = h1
-        request.session['ids'] = "1"
+        request.session['ids'] = ids
         return redirect("sign")
 
     docsAll = ViewAccess.objects.filter(user=request.user)
@@ -507,23 +503,39 @@ def payback(request,refund_pk):
 def view_share_requests(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
-    if request.method=='POST':
-        val = "/media/profile_pics/q4.jpeg"
-        docid = 1 
-        print("i m here")
-        h1 = ""
-        with open(val , "rb") as f:
+    if request.method=='POST' and "fulfil_req" in request.POST:
+        form = RequestForm(request.POST)
+        if form.is_valid():
+            # form.save()
+            # return redirect('share_docs')
+            print(form.cleaned_data)
+            document  = form.cleaned_data.get('document')
+            req = form.cleaned_data.get('request')
+            req.is_fulfilled  = True
+            userhere  = req.patient.user
+            ViewAccess.objects.create(document = document,  user=userhere)
+            req.save()
+            messages.success(request, f'Request fulfilled')
             
-            encoded_string = base64.b64encode(f.read())
-            print(encoded)
-            h1 =  hashlib.sha256(encoded_string.encode()).hexdigest()
-        request.session['hash'] = h1
-        request.session['ids'] = ids
+
+
+    # if request.method=='POST':
+    #     val = "/media/profile_pics/q4.jpeg"
+    #     docid = 1 
+    #     print("i m here")
+    #     h1 = ""
+    #     with open(val , "rb") as f:
+            
+    #         encoded_string = base64.b64encode(f.read())
+    #         print(encoded)
+    #         h1 =  hashlib.sha256(encoded_string.encode()).hexdigest()
+    #     request.session['hash'] = h1
+    #     request.session['ids'] = ids
                     
-        print(len(h1))            
-        print(h1)
-        print(type(h1))
-        return redirect('upload_medical_doc')
+    #     print(len(h1))            
+    #     print(h1)
+    #     print(type(h1))
+    #     return redirect('upload_medical_doc')
 
 
 
@@ -533,6 +545,6 @@ def view_share_requests(request):
     
     form2 = RequestForm()
     form2.fields['request'].queryset = share_requests
-    form2.fields['document'].queryset = MedicalDocuments.objects.filter(owner=request.user)
+    form2.fields['document'].queryset = MedicalDocuments.objects.filter(owner=request.user , is_verified = True)
 
     return render (request,"users/view_share_requests.html",{'share_requests':share_requests ,  "form2" : form2})

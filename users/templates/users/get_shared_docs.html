@@ -10,6 +10,7 @@
     <tr>
         <th>url</th>
         <th>status</th>
+        <th></th>
         <th>id </th>
     </tr>
 {% for doc in docs %}
@@ -29,10 +30,11 @@
     <td>
         <form  method="post">
             {% csrf_token %}
-            <input id="xyz" type="text" name="xyz" hidden value = {{patient.user.pk}}  >
+            <input id="xyz" type="text" name="xyz" hidden value = {{doc.document.pk}}  >
             <input type="submit" value="Verify">
         </form>
     </td>
+    <td></td>
        
     {% else %}
     <td>Not Verified</td>
