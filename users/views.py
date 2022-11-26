@@ -411,6 +411,9 @@ def share_docs(request):
         l1 = list(ViewAccess.objects.filter(user__pk=request.user.pk).values_list('document',flat=True))
         form.fields['document'].queryset = MedicalDocuments.objects.filter(pk__in = l1,is_verified=True)
         form.fields['user'].queryset = User_Auth.objects.exclude(pk=request.user.pk)
+        if(request.user.profile.user_type=='Hospital'):
+            form.fields['user'].queryset = User_Auth.objects.filter(profile__user_type='Patient')
+            form.fields['document'].queryset = MedicalDocuments.objects.filter(owner=request.user)
     return render(request, 'users/share_docs.html', {'form': form })
 
 # #@loggin_required
@@ -429,6 +432,16 @@ def place_infirmary_order(request,inf_pk):
             # print(request.user.patient.wallet,' ',obj.infirmary.wallet)
             request.user.patient.save()
             obj.infirmary.save()
+            file_loc = 'media/profile_pics/'+str(obj.pk)+'.txt'
+            f = open(file_loc, 'w')
+            f.writelines(str(form.cleaned_data.get('amount_paid')))
+            f.writelines('\n')
+            f.writelines(obj.description)
+            f.close()
+            doc_loc = 'profile_pics/'+str(obj.pk)+'.txt'
+            new_doc = MedicalDocuments.objects.create(owner=obj.infirmary.user,medical_doc=doc_loc,is_verified=True,verifier=None)
+            ViewAccess.objects.create(document = new_doc,user=request.user)
+            ViewAccess.objects.create(document = new_doc,user=obj.infirmary.user)
             return redirect('get_infirmaries')
         else:
             print(form.errors.as_data())
