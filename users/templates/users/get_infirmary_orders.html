@@ -9,6 +9,7 @@
         <th>Doc</th>
         <th>Amount</th>
         <th>Description</th>
+        <th>confirm order</th>
       </tr>
 {% for r in requests%}
 
@@ -17,7 +18,13 @@
     <td><a href="{{r.doc.medical_doc.url}}">{{r.doc.medical_doc.url}}</a></td>
     <td>{{r.amount_paid}}</td>
     <td>{{r.description}}</td>
-    
+    <td>
+        <form  method="post">
+        {% csrf_token %}
+        <input id="request_pk" type="text" name="request_pk" hidden value = {{r.pk}}  >
+        <input type="submit" value="Confirm order">
+        </form>
+    </td>
 
 </tr>
 

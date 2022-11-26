@@ -6,12 +6,25 @@ from django.contrib.auth.decorators import login_required
 from .forms import *
 from .models import Patient,Profile , ViewAccess , User_Auth
 from .filters import *
+from django.http.response import FileResponse
+from django.http import HttpResponseForbidden
 import random
 import smtplib
 import time
 import hashlib
 import base64
 # Create your views here.
+
+# def media_access(request, path):    
+#     emailsp = request.session["user"]
+#     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+#     access_granted=True
+#     if access_granted:
+#         print(path)
+#         response = FileResponse(path)
+#         return response
+#     else:
+#         return HttpResponseForbidden('Not authorized to access this media.')
 
 def register(request):
     if request.method=='POST':
@@ -427,21 +440,21 @@ def place_infirmary_order(request,inf_pk):
             obj.infirmary= Infirmary.objects.get(pk=inf_pk)
             obj.patient = request.user.patient
             obj.save()
-            request.user.patient.wallet -= form.cleaned_data.get('amount_paid')
-            obj.infirmary.wallet += form.cleaned_data.get('amount_paid')
-            # print(request.user.patient.wallet,' ',obj.infirmary.wallet)
-            request.user.patient.save()
-            obj.infirmary.save()
-            file_loc = 'media/profile_pics/'+str(obj.pk)+'.txt'
-            f = open(file_loc, 'w')
-            f.writelines(str(form.cleaned_data.get('amount_paid')))
-            f.writelines('\n')
-            f.writelines(obj.description)
-            f.close()
-            doc_loc = 'profile_pics/'+str(obj.pk)+'.txt'
-            new_doc = MedicalDocuments.objects.create(owner=obj.infirmary.user,medical_doc=doc_loc,is_verified=True,verifier=None)
-            ViewAccess.objects.create(document = new_doc,user=request.user)
-            ViewAccess.objects.create(document = new_doc,user=obj.infirmary.user)
+            # request.user.patient.wallet -= form.cleaned_data.get('amount_paid')
+            # obj.infirmary.wallet += form.cleaned_data.get('amount_paid')
+            # # print(request.user.patient.wallet,' ',obj.infirmary.wallet)
+            # request.user.patient.save()
+            # obj.infirmary.save()
+            # file_loc = 'media/profile_pics/'+str(obj.pk)+'.txt'
+            # f = open(file_loc, 'w')
+            # f.writelines(str(form.cleaned_data.get('amount_paid')))
+            # f.writelines('\n')
+            # f.writelines(obj.description)
+            # f.close()
+            # doc_loc = 'profile_pics/'+str(obj.pk)+'.txt'
+            # new_doc = MedicalDocuments.objects.create(owner=obj.infirmary.user,medical_doc=doc_loc,is_verified=True,verifier=None)
+            # ViewAccess.objects.create(document = new_doc,user=request.user)
+            # ViewAccess.objects.create(document = new_doc,user=obj.infirmary.user)
             return redirect('get_infirmaries')
         else:
             print(form.errors.as_data())
@@ -490,6 +503,25 @@ def get_insurance_refund_requests(request):
 def get_infirmary_orders(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+    if(request.method=="POST"):
+        request_pk = request.POST["request_pk"]
+        obj = InfirmaryOrder.objects.get(pk=request_pk)
+        
+        obj.patient.wallet -= obj.amount_paid
+        obj.infirmary.wallet += obj.amount_paid
+        obj.patient.save()
+        obj.infirmary.save()
+        file_loc = 'media/profile_pics/'+str(obj.pk)+'.txt'
+        f = open(file_loc, 'w')
+        f.writelines(str(obj.amount_paid))
+        f.writelines('\n')
+        f.writelines(obj.description)
+        f.close()
+        doc_loc = 'profile_pics/'+str(obj.pk)+'.txt'
+        new_doc = MedicalDocuments.objects.create(owner=obj.infirmary.user,medical_doc=doc_loc,is_verified=True,verifier=None)
+        ViewAccess.objects.create(document = new_doc,user=obj.patient.user)
+        ViewAccess.objects.create(document = new_doc,user=obj.infirmary.user)
+
     orders = InfirmaryOrder.objects.filter(infirmary = request.user.infirmary)
     return render (request,"users/get_infirmary_orders.html",{'requests':orders})
 
