@@ -450,8 +450,14 @@ def request_insurance_refund(request,insurance_pk):
             obj.save()
             return redirect('get_insurancecompanies')
 
+    
+    insurance_auth_pk = InsuranceCompany.objects.get(pk=insurance_pk).user.pk
     form = InsuranceRefundForm()
-    l1 = list(ViewAccess.objects.filter(user__pk=request.user.pk).values_list('document',flat=True))
+    patient_access = list(ViewAccess.objects.filter(user__pk=request.user.pk).values_list('document',flat=True))
+    insurance_access = list(ViewAccess.objects.filter(user__pk=insurance_auth_pk).values_list('document',flat=True))
+    print(patient_access)
+    print(insurance_access)
+    l1 = set(patient_access).intersection(insurance_access)
     form.fields['doc'].queryset = MedicalDocuments.objects.filter(pk__in = l1)
 
     return render(request, 'users/request_insurance_refund.html', {'form': form})
