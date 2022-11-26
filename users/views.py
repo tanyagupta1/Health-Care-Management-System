@@ -402,7 +402,9 @@ def share_docs(request):
 
     else:
         form = ViewAccessForm()
-        form.fields['document'].queryset = MedicalDocuments.objects.filter(is_verified=True,owner=request.user)
+        l1 = list(ViewAccess.objects.filter(user__pk=request.user.pk).values_list('document',flat=True))
+        form.fields['document'].queryset = MedicalDocuments.objects.filter(pk__in = l1,is_verified=True)
+        form.fields['user'].queryset = User_Auth.objects.exclude(pk=request.user.pk)
     return render(request, 'users/share_docs.html', {'form': form })
 
 # #@loggin_required

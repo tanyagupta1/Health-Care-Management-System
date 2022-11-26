@@ -30,8 +30,8 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarToggle">
                     <div class="navbar-nav mr-auto">
-                        <a class="nav-item nav-link" href="{% url 'blog-home' %}">Home</a>
-                        <a class="nav-item nav-link" href="{% url 'blog-about' %}">About</a>
+                        <!-- <a class="nav-item nav-link" href="{% url 'blog-home' %}">Home</a>
+                        <a class="nav-item nav-link" href="{% url 'blog-about' %}">About</a> -->
                     </div>
                     <!-- Navbar Right Side -->
                     <div class="navbar-nav">
@@ -45,9 +45,10 @@
                             {% if user.profile.user_type == "Patient" and user.patient.is_verified %}
                             <a class="nav-item nav-link" href="{% url 'upload_medical_doc' %}">Upload Docs</a>
                             <a class="nav-item nav-link" href="{% url 'get_shared_docs' %}">Viewable Docs(P)</a>
+                            <a class="nav-item nav-link" href="{% url 'share_docs' %}">Share Docs(P)</a>
                             <a class="nav-item nav-link" href="{% url 'get_hospitals' %}">Hospitals</a>
                             <a class="nav-item nav-link" href="{% url 'get_infirmaries' %}">Infirmaries</a>
-                            <a class="nav-item nav-link" href="{% url 'get_insurancecompanies' %}">InsuranceCompanies</a>
+                            <a class="nav-item nav-link" href="{% url 'get_insurancecompanies' %}">Insurance</a>
                             {% elif user.profile.user_type == "Hospital" and user.hospital.is_verified %}
                             <a class="nav-item nav-link" href="{% url 'upload_medical_doc' %}">Upload Docs</a>
                             <a class="nav-item nav-link" href="{% url 'get_shared_docs' %}">Viewable Docs(H)</a>
