@@ -115,3 +115,9 @@ class DocRequestHospital(models.Model):
     is_fulfilled = models.BooleanField(default=False,null=True)
     def __str__(self):
         return f'DocRequestHospital'
+
+class RequestModel(models.Model):
+    document = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
+    request = models.ForeignKey(DocRequestHospital,on_delete=models.CASCADE,null=True)
+    def __str__(self):
+        return f'Requestform'

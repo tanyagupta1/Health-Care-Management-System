@@ -52,6 +52,7 @@
                             <a class="nav-item nav-link" href="{% url 'upload_medical_doc' %}">Upload Docs</a>
                             <a class="nav-item nav-link" href="{% url 'get_shared_docs' %}">Viewable Docs(H)</a>
                             <a class="nav-item nav-link" href="{% url 'view_share_requests' %}">Share Requests(H)</a>
+                            
                             {% elif user.profile.user_type == "Infirmary" and user.infirmary.is_verified %}
                             <a class="nav-item nav-link" href="{% url 'get_shared_docs' %}">Viewable Docs(IF)</a>
                             <a class="nav-item nav-link" href="{% url 'get_infirmary_orders' %}">Infirmary orders</a>

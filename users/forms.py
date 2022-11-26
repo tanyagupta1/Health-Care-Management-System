@@ -77,3 +77,14 @@ class ViewAccessForm(forms.ModelForm):
     class Meta:
       model = ViewAccess
       fields = ['document','user']
+
+
+class RequestForm(forms.ModelForm):
+    class Meta:
+      model = RequestModel
+      fields = ['document', 'request']
+
+class DocForm(forms.ModelForm):
+    class Meta:
+      model = MedicalDocuments
+      fields = ['medical_doc']

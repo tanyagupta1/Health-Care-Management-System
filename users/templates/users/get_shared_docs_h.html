@@ -8,23 +8,17 @@
 <div>
 <table border="1">
     <tr>
-        <th>url</th>
-        <th>status</th>
-        <th>id </th>
+        <th>pk</th>
+        <th>Document</th>
+        <th>Verification Status</th>
     </tr>
 {% for doc in docs %}
 
 <tr>
-    <!-- <td>{{doc.document.pk}}</td> -->
+    <td>{{doc.document.pk}}</td>
     <td><a href="{{doc.document.medical_doc.url}}">{{doc.document.medical_doc.url}}</a></td>
     {% if doc.document.is_verified %}
     <td>Verified</td>
-    <td><form  method="post">
-        {% csrf_token %}
-        <input id="dis" type="text" name="dis" hidden value = {{doc.document.pk}}  >
-        <input type="submit" value="view_doc" name = "view_doc">
-        </form></td>
-
     {% elif user.profile.user_type == "Hospital" %} 
     <td>
         <form  method="post">
@@ -33,26 +27,14 @@
             <input type="submit" value="Verify">
         </form>
     </td>
-       
     {% else %}
-    <td>Not Verified</td>S
-    
+    <td>Not Verified</td>
     {% endif %}
     
-   
 </tr>
 
 {% endfor %}
 </table>
 
-
-<form method = "POST" enctype="multipart/form-data">
-    {% csrf_token %}
-   
-        {{form|crispy}}
-    <div class="form-group">
-        <button class="btn btn-outline-info" name="upload_doc">Update</button>
-    </div>
-</form>
 </div>
 {% endblock content %}

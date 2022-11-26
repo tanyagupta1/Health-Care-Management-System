@@ -38,8 +38,9 @@ urlpatterns = [
 
 
     path('view_share_requests/',user_views.view_share_requests,name='view_share_requests'),
-    
-
+    path('verifydoc/',user_views.verifydoc,name='verifydoc'),
+    path('check/',user_views.check,name='check'),
+    path('sign/',user_views.sign,name='sign'),
     path('get_infirmaries/',user_views.get_infirmaries,name='get_infirmaries'),
     path('get_insurancecompanies/',user_views.get_insurancecompanies,name='get_insurancecompanies'),
     path('upload_medical_doc/',user_views.upload_medical_doc,name='upload_medical_doc'), 

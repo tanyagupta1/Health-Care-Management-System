@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import *
@@ -9,6 +10,7 @@ import random
 import smtplib
 import time
 import hashlib
+import base64
 # Create your views here.
 
 def register(request):
@@ -258,14 +260,69 @@ def get_hospitals(request):
     hospitals = myFilter.qs
     return render (request,"users/get_hospitals.html",{'hospitals':hospitals,'myFilter':myFilter})
 
+@csrf_exempt
+def sign(request):
+    if request.method=='POST':
+        id_data  = request.POST["idData"];
+        hashVal = request.POST["data"];
+        id_data =3 
+
+        print(id_data)
+        print(hashVal)
+        mydoc = MedicalDocuments.objects.filter(pk = id_data)[0]
+        mydoc.is_verified = True
+        mydoc.save()
+        print(mydoc)
+        print("hello")
+
+
+        return redirect("check")
+    h1 = request.session['hash']
+    docid = request.session['ids']
+    return render(request , "users/sign.html" , {"hash" : h1 , "doc" : docid} )
+    
+
+
+
+def verifydoc(request): 
+    ids = request.session["docccccd"]
+    mydoc = MedicalDocuments.objects.filter(pk = ids)[0]
+    docurl = mydoc.medical_doc
+    print(docurl)
+    return render(request , "users/verifydoc.html"); 
 
 def get_shared_docs(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+
+    if request.method=='POST' and 'view_doc' in request.POST:
+        ids = request.POST["dis"]
+        request.session["docccccd"] = ids
+
+        return redirect("verifydoc")
+        
+    if request.method=='POST':
+        val = "media/profile_pics/q4.jpeg"
+        docid = 1 
+        print("i m here")
+        h1 = ""
+        with open(val , "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+            h1 =  hashlib.sha256(encoded_string).hexdigest()
+        
+        request.session['hash'] = h1
+        request.session['ids'] = "1"
+        return redirect("sign")
+
     docsAll = ViewAccess.objects.filter(user=request.user)
-    return render (request,"users/get_shared_docs.html",{'docs':docsAll})
+    return render (request,"users/get_shared_docs.html",{'docs':docsAll })
 
+@csrf_exempt
+def check(request):
+   
+    
 
+    return render(request, "users/check.html");
 def get_infirmaries(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
@@ -400,5 +457,32 @@ def payback(request,refund_pk):
 def view_share_requests(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
-    share_requests = DocRequestHospital.objects.filter(hospital=request.user.hospital)
-    return render (request,"users/view_share_requests.html",{'share_requests':share_requests})
+    if request.method=='POST':
+        val = "/media/profile_pics/q4.jpeg"
+        docid = 1 
+        print("i m here")
+        h1 = ""
+        with open(val , "rb") as f:
+            
+            encoded_string = base64.b64encode(f.read())
+            print(encoded)
+            h1 =  hashlib.sha256(encoded_string.encode()).hexdigest()
+        request.session['hash'] = h1
+        request.session['ids'] = ids
+                    
+        print(len(h1))            
+        print(h1)
+        print(type(h1))
+        return redirect('upload_medical_doc')
+
+
+
+
+    
+    share_requests = DocRequestHospital.objects.filter(hospital=request.user.hospital, is_fulfilled = False)
+    
+    form2 = RequestForm()
+    form2.fields['request'].queryset = share_requests
+    form2.fields['document'].queryset = MedicalDocuments.objects.filter(owner=request.user)
+
+    return render (request,"users/view_share_requests.html",{'share_requests':share_requests ,  "form2" : form2})
