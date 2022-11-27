@@ -206,6 +206,7 @@ def doc_share_otp(request):
                 user2 = User_Auth.objects.filter(pk =userkey)[0]
                 h1 = ViewAccess.objects.create(document = medDoc,  user=user2)
                 return redirect('share_docs')
+            
                 
 
     form = OtpForm()
@@ -223,6 +224,7 @@ def ShareDocP(request , pk):
         try:
             otp=random.randint(1000,9999)
             request.session['otp'] = otp
+            
             # email = str(request.user.email_id)
             # s = smtplib.SMTP('smtp.gmail.com', 587)
             # s.starttls()
