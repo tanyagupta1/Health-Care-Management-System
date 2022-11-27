@@ -3,9 +3,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import *
 class UserRegisterForm(forms.Form):
-    email_id = forms.EmailField(label='email_id')
-    password1 = forms.CharField(widget=forms.PasswordInput())
-    password2 = forms.CharField(widget=forms.PasswordInput())
+    email_id = forms.EmailField(label='email id')
+    password1 = forms.CharField(label='password',widget=forms.PasswordInput())
+    password2 = forms.CharField(label='re enter password',widget=forms.PasswordInput())
 
 # test12345
 #test 123456
