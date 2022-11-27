@@ -9,8 +9,7 @@ class UserRegisterForm(forms.Form):
 
 # test12345
 #test 123456
-USER_CHOICES = 
-[
+USER_CHOICES = [
     ('Patient','Patient'),
     ('Hospital','Hospital'),
     ('Infirmary','Infirmary'),
