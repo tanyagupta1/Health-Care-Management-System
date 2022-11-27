@@ -124,3 +124,11 @@ class RequestModel(models.Model):
     request = models.ForeignKey(DocRequestHospital,on_delete=models.CASCADE,null=True)
     def __str__(self):
         return f'Requestform'
+
+class Transactions(models.Model):
+    sender = models.ForeignKey(User_Auth,related_name='sender',on_delete=models.CASCADE,null=True)
+    receiver = models.ForeignKey(User_Auth,related_name='reciever',on_delete=models.CASCADE,null=True)
+    amount = models.IntegerField(default=0,null=True)
+    time = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return f'{self.sender}{self.receiver} Transaction'

@@ -449,7 +449,7 @@ def share_docs(request):
         form.fields['user'].queryset = User_Auth.objects.exclude(pk=request.user.pk)
         if(request.user.profile.user_type=='Hospital'):
             form.fields['user'].queryset = User_Auth.objects.filter(profile__user_type='Patient')
-            form.fields['document'].queryset = MedicalDocuments.objects.filter(owner=request.user,verified=True)
+            form.fields['document'].queryset = MedicalDocuments.objects.filter(owner=request.user,is_verified=True)
     return render(request, 'users/share_docs.html', {'form': form })
 
 # #@loggin_required
@@ -534,6 +534,7 @@ def get_infirmary_orders(request):
         obj.infirmary.wallet += obj.amount_paid
         obj.patient.save()
         obj.infirmary.save()
+        Transactions.objects.create(sender = obj.patient.user,receiver=obj.infirmary.user,amount=obj.amount_paid)
         file_loc = 'media/profile_pics/'+str(obj.pk)+'.txt'
         f = open(file_loc, 'w')
         f.writelines(str(obj.amount_paid))
@@ -565,6 +566,7 @@ def payback(request,refund_pk):
     refund_request.patient.wallet+= refund_request.refund_amount
     request.user.insurancecompany.save()
     refund_request.patient.save()
+    Transactions.objects.create(sender = request.user,receiver=refund_request.patient.user,amount=refund_request.refund_amount)
     InsuranceRefund.objects.get(pk=refund_pk).delete()
     return redirect('get_insurance_refund_requests')
 
