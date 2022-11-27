@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
@@ -15,16 +15,22 @@ import hashlib
 import base64
 # Create your views here.
 
-# def media_access(request, path):    
-#     emailsp = request.session["user"]
-#     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
-#     access_granted=True
-#     if access_granted:
-#         print(path)
-#         response = FileResponse(path)
-#         return response
-#     else:
-#         return HttpResponseForbidden('Not authorized to access this media.')
+def media_access(request, file): 
+    emailsp = request.session["user"]
+    request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+    print("HERE")
+    try:
+        doc=get_object_or_404(MedicalDocuments,medical_doc="profile_pics/"+file)
+        view_access = ViewAccess.objects.filter(user = request.user,document = doc).first()
+        if(view_access ==None ):
+            return HttpResponseForbidden("Forbidden")
+        else:
+            return FileResponse(doc.medical_doc)
+    except:
+        return HttpResponseForbidden("Forbidden")
+#     path,file_name=os.path.split(file)
+#     response=FileResponse(document.medical_doc)
+#     return response
 
 def register(request):
     if request.method=='POST':

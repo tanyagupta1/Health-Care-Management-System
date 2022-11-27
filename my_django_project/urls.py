@@ -52,7 +52,7 @@ urlpatterns = [
     path('get_infirmary_orders/',user_views.get_infirmary_orders,name='get_infirmary_orders'),
     path('delete_doc/<str:doc_pk>/',user_views.delete_doc,name='delete_doc'),
     path('payback/<str:refund_pk>/',user_views.payback,name='payback'),
-    # path('media/profile_pics/<str:path>', user_views.media_access, name='media_access'),
+    path('media/profile_pics/<str:file>', user_views.media_access, name='media_access'),
 
     
     
