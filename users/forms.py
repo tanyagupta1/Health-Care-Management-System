@@ -9,7 +9,14 @@ class UserRegisterForm(forms.Form):
 
 # test12345
 #test 123456
-
+USER_CHOICES = 
+[
+    ('Patient','Patient'),
+    ('Hospital','Hospital'),
+    ('Infirmary','Infirmary'),
+    ('InsuranceCompany','InsuranceCompany')
+    
+]
 class UserUpdateForm(forms.ModelForm):
     email_id = forms.EmailField(required=True)
 
@@ -23,7 +30,7 @@ class ProfileUpdateForm(forms.ModelForm):
         fields = ['image']
 
 class UserTypeForm(forms.Form):
-    your_type = forms.CharField(label='Patient/Hospital/Infirmary/InsuranceCompany', max_length=100)
+    your_type = forms.ChoiceField(choices=USER_CHOICES)
     otp = forms.CharField(label='otp', max_length=10)
 
 

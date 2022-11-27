@@ -15,6 +15,23 @@ import hashlib
 import base64
 # Create your views here.
 
+def add_money(request): 
+    emailsp = request.session["user"]
+    request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+    if request.method=='POST':
+        amount  = int(request.POST.get("amount"))
+        if(request.user.profile.user_type=="Patient"):
+            request.user.patient.wallet += amount
+            request.user.patient.save()   
+        if(request.user.profile.user_type=="Infirmary"):
+            request.user.infirmary.wallet += amount
+            request.user.infirmary.save()
+        if(request.user.profile.user_type=="InsuranceCompany"):
+            request.user.insurancecompany.wallet += amount
+            request.user.insurancecompany.save()
+
+    return render(request,'users/add_money.html')
+
 def media_access(request, file): 
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
