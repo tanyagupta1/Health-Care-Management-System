@@ -20,13 +20,20 @@ def resetotp(request):
         if form.is_valid():
             userkey = request.session.get('urt')
             otp = request.session.get('otp')
-            if (str(otp) == str(form.cleaned_data.get('otp'))):
+            if str(otp) == str(form.cleaned_data.get('otp')) and (time.time() - request.session.get('otp_gen_time') < 60):
                 emailsp = request.session["email"]
                 userss =  User_Auth.objects.filter(email_id = emailsp)[0]
                 userss.password_hash = request.session["pasnewpass"]
                 userss.save()
                 messages.success(request,f'Account reset for {emailsp}!')
                 return redirect("login")
+            elif time.time() - request.session.get('otp_gen_time') > 60:
+                messages.error(request, 'OTP expired. Try again.')
+                # request.session["otp"] = send_otp()
+                # request.session["otp_gen_time"] =time.time()
+                return redirect("login")
+            else:
+                messages.error(request, 'Incorrect OTP. Try again.')
                 
     
     form = OtpForm()
@@ -54,15 +61,8 @@ def reset(request):
                 request.session["pasnewpass"] = passwordHash
                 request.session["email"] = email_id
                 try:
-                    otp=random.randint(1000,9999)
-                    request.session['otp'] = otp
-                    # email = str(request.user.email_id)
-                    # s = smtplib.SMTP('smtp.gmail.com', 587)
-                    # s.starttls()
-                    # s.login("agarg19030@gmail.com", "kgsbxtxqjjtoddwk")
-                    # s.sendmail("msg", email,"your otp is"+ str(otp))
-                    print("Share OTP is ",otp)
-                    print("Success")
+                    request.session['otp'] = send_otp()
+                    request.session['otp_gen_time'] = time.time()
                     return redirect("resetotp")
                 except:
                     pass
@@ -204,10 +204,14 @@ def get_user_type(request):
         if form.is_valid():
             user_type = form.cleaned_data.get('your_type')
             otp = request.session.get('otp')
-            if (str(otp) == str(form.cleaned_data.get('otp'))):
+            if str(otp) == str(form.cleaned_data.get('otp')) and (time.time() - request.session.get('otp_gen_time') < 60):
                 print("hahahah")
+            elif time.time() - request.session.get('otp_gen_time') > 60:
+                messages.error(request, "OTP expired. Try again.")
+                return redirect('login')
             else:
-                return redirect("login")
+                # messages.error(request, "Incorrect OTP. Try again.")
+                return render(request, 'users/user_type.html', {'form': UserTypeForm()})
             print("USER TYPE IS ",user_type)
             request.user.profile.user_type_decided=True
             request.user.profile.user_type = user_type
@@ -240,20 +244,14 @@ def after_login(request):
         return redirect("login")
     else:
         try:
-            otp=random.randint(1000,9999)
-            request.session['otp'] = otp
+            request.session['otp'] = send_otp()
+            request.session['otp_gen_time'] = time.time()
             email = str(request.user.email_id)
-            # s = smtplib.SMTP('smtp.gmail.com', 587)
-            # s.starttls()
-            # s.login("agarg19030@gmail.com", "kgsbxtxqjjtoddwk")
-            # s.sendmail("msg", email,"your otp is"+ str(otp))
-            # print("Success")
-            print("OTP is ",str(otp))
         except Exception as e:
             print(e)
             return redirect('login')
-                # messages.error(request,"Sorry. some trouble")
-        return redirect('user_type')         # return redirect('register')
+                
+        return redirect('user_type')         
 
 def doc_share_otp(request):
     emailsp = request.session["user"]
@@ -263,7 +261,7 @@ def doc_share_otp(request):
         if form.is_valid():
             userkey = request.session.get('urt')
             otp = request.session.get('otp')
-            if (str(otp) == str(form.cleaned_data.get('otp'))):
+            if str(otp) == str(form.cleaned_data.get('otp')) and (time.time() - request.session.get('otp_gen_time') < 60):
                 print("OTP matched")
                 dockey = request.session.get('drt')
                 medDoc = MedicalDocuments.objects.filter(pk=dockey)[0]
@@ -271,12 +269,27 @@ def doc_share_otp(request):
                 user2 = User_Auth.objects.filter(pk =userkey)[0]
                 h1 = ViewAccess.objects.create(document = medDoc,  user=user2)
                 return redirect('share_docs')
-            
-                
-                
-
+            elif (time.time() - request.session.get('otp_gen_time') > 60):
+                messages.error(request, "OTP expired. Try again.")
+                redirect("doc_share_otp")
+            else:
+                messages.error(request, 'Incorrect OTP. Try again.')
+    
     form = OtpForm()
     return render(request,"users/doc_share_otp.html" , {"form": form})
+
+def send_otp():
+    otp=random.randint(1000,9999)
+            
+    # email = str(request.user.email_id)
+    # s = smtplib.SMTP('smtp.gmail.com', 587)
+    # s.starttls()
+    # s.login("agarg19010@gmail.com", "kgsbxtxqjjtoddwk")
+    # s.sendmail("msg", email,"your otp is"+ str(otp))
+    print("Share OTP is ",otp)
+    print("Success")
+
+    return otp
 
 def ShareDocP(request , pk):
     emailsp = request.session["user"]
@@ -288,16 +301,8 @@ def ShareDocP(request , pk):
         request.session['drt'] = pk
         print("hey")
         try:
-            otp=random.randint(1000,9999)
-            request.session['otp'] = otp
-            
-            # email = str(request.user.email_id)
-            # s = smtplib.SMTP('smtp.gmail.com', 587)
-            # s.starttls()
-            # s.login("agarg19030@gmail.com", "kgsbxtxqjjtoddwk")
-            # s.sendmail("msg", email,"your otp is"+ str(otp))
-            print("Share OTP is ",otp)
-            print("Success")
+            request.session['otp'] = send_otp()
+            request.session['otp_gen_time'] = time.time()
             return redirect("doc_share_otp")
         except:
             pass
@@ -461,15 +466,8 @@ def share_docs(request):
             request.session['urt'] = form.cleaned_data.get('user').pk
             request.session['drt'] = form.cleaned_data.get('document').pk
             try:
-                otp=random.randint(1000,9999)
-                request.session['otp'] = otp
-                # email = str(request.user.email_id)
-                # s = smtplib.SMTP('smtp.gmail.com', 587)
-                # s.starttls()
-                # s.login("agarg19030@gmail.com", "kgsbxtxqjjtoddwk")
-                # s.sendmail("msg", email,"your otp is"+ str(otp))
-                print("Share OTP is ",otp)
-                print("Success")
+                request.session['otp'] = send_otp()
+                request.session['otp_gen_time'] = time.time()
                 return redirect("doc_share_otp")
             except:
                 pass
