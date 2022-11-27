@@ -32,6 +32,7 @@ urlpatterns = [
     path('user_type/',user_views.get_user_type,name='user_type'),
     path('doc_share_otp/',user_views.doc_share_otp,name='doc_share_otp'),
     path('after_login/',user_views.after_login,name='after_login'),
+     path('add_money/',user_views.add_money,name='add_money'),
     path('get_hospitals/',user_views.get_hospitals,name='get_hospitals'),
     path('get_shared_docs/',user_views.get_shared_docs,name='get_shared_docs'),
     path('share_docs/',user_views.share_docs,name='share_docs'),
@@ -53,7 +54,8 @@ urlpatterns = [
     path('get_insurance_refund_requests/',user_views.get_insurance_refund_requests,name='get_insurance_refund_requests'),
     path('get_infirmary_orders/',user_views.get_infirmary_orders,name='get_infirmary_orders'),
     path('delete_doc/<str:doc_pk>/',user_views.delete_doc,name='delete_doc'),
-    path('payback/<str:refund_pk>/',user_views.payback,name='payback')
+    path('payback/<str:refund_pk>/',user_views.payback,name='payback'),
+    path('media/profile_pics/<str:file>', user_views.media_access, name='media_access'),
 
     
     

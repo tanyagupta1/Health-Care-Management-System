@@ -8,13 +8,19 @@ class ResetUserRegisterForm(forms.Form):
     newPassword = forms.CharField(widget=forms.PasswordInput())
     renternewPassword = forms.CharField(widget=forms.PasswordInput())
 class UserRegisterForm(forms.Form):
-    email_id = forms.EmailField(label='email_id')
-    password1 = forms.CharField(widget=forms.PasswordInput())
-    password2 = forms.CharField(widget=forms.PasswordInput())
+    email_id = forms.EmailField(label='email id')
+    password1 = forms.CharField(label='password',widget=forms.PasswordInput())
+    password2 = forms.CharField(label='re enter password',widget=forms.PasswordInput())
 
 # test12345
 #test 123456
-
+USER_CHOICES = [
+    ('Patient','Patient'),
+    ('Hospital','Hospital'),
+    ('Infirmary','Infirmary'),
+    ('InsuranceCompany','InsuranceCompany')
+    
+]
 class UserUpdateForm(forms.ModelForm):
     email_id = forms.EmailField(required=True)
 
@@ -28,7 +34,7 @@ class ProfileUpdateForm(forms.ModelForm):
         fields = ['image']
 
 class UserTypeForm(forms.Form):
-    your_type = forms.CharField(label='Patient/Hospital/Infirmary/InsuranceCompany', max_length=100)
+    your_type = forms.ChoiceField(choices=USER_CHOICES)
     otp = forms.CharField(label='otp', max_length=10)
 
 

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from .forms import *
 from .models import Patient,Profile , ViewAccess , User_Auth
 from .filters import *
+from django.http.response import FileResponse
+from django.http import HttpResponseForbidden
 import random
 import smtplib
 import time
@@ -73,6 +75,39 @@ def reset(request):
     form = ResetUserRegisterForm()
     return render(request,'users/reset.html',{'form':form})
 
+def add_money(request): 
+    emailsp = request.session["user"]
+    request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+    if request.method=='POST':
+        amount  = int(request.POST.get("amount"))
+        if(request.user.profile.user_type=="Patient"):
+            request.user.patient.wallet += amount
+            request.user.patient.save()   
+        if(request.user.profile.user_type=="Infirmary"):
+            request.user.infirmary.wallet += amount
+            request.user.infirmary.save()
+        if(request.user.profile.user_type=="InsuranceCompany"):
+            request.user.insurancecompany.wallet += amount
+            request.user.insurancecompany.save()
+
+    return render(request,'users/add_money.html')
+
+def media_access(request, file): 
+    emailsp = request.session["user"]
+    request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+    print("HERE")
+    try:
+        doc=get_object_or_404(MedicalDocuments,medical_doc="profile_pics/"+file)
+        view_access = ViewAccess.objects.filter(user = request.user,document = doc).first()
+        if(view_access ==None ):
+            return HttpResponseForbidden("Forbidden")
+        else:
+            return FileResponse(doc.medical_doc)
+    except:
+        return HttpResponseForbidden("Forbidden")
+#     path,file_name=os.path.split(file)
+#     response=FileResponse(document.medical_doc)
+#     return response
 
 def register(request):
     if request.method=='POST':
@@ -494,21 +529,21 @@ def place_infirmary_order(request,inf_pk):
             obj.infirmary= Infirmary.objects.get(pk=inf_pk)
             obj.patient = request.user.patient
             obj.save()
-            request.user.patient.wallet -= form.cleaned_data.get('amount_paid')
-            obj.infirmary.wallet += form.cleaned_data.get('amount_paid')
-            # print(request.user.patient.wallet,' ',obj.infirmary.wallet)
-            request.user.patient.save()
-            obj.infirmary.save()
-            file_loc = 'media/profile_pics/'+str(obj.pk)+'.txt'
-            f = open(file_loc, 'w')
-            f.writelines(str(form.cleaned_data.get('amount_paid')))
-            f.writelines('\n')
-            f.writelines(obj.description)
-            f.close()
-            doc_loc = 'profile_pics/'+str(obj.pk)+'.txt'
-            new_doc = MedicalDocuments.objects.create(owner=obj.infirmary.user,medical_doc=doc_loc,is_verified=True,verifier=None)
-            ViewAccess.objects.create(document = new_doc,user=request.user)
-            ViewAccess.objects.create(document = new_doc,user=obj.infirmary.user)
+            # request.user.patient.wallet -= form.cleaned_data.get('amount_paid')
+            # obj.infirmary.wallet += form.cleaned_data.get('amount_paid')
+            # # print(request.user.patient.wallet,' ',obj.infirmary.wallet)
+            # request.user.patient.save()
+            # obj.infirmary.save()
+            # file_loc = 'media/profile_pics/'+str(obj.pk)+'.txt'
+            # f = open(file_loc, 'w')
+            # f.writelines(str(form.cleaned_data.get('amount_paid')))
+            # f.writelines('\n')
+            # f.writelines(obj.description)
+            # f.close()
+            # doc_loc = 'profile_pics/'+str(obj.pk)+'.txt'
+            # new_doc = MedicalDocuments.objects.create(owner=obj.infirmary.user,medical_doc=doc_loc,is_verified=True,verifier=None)
+            # ViewAccess.objects.create(document = new_doc,user=request.user)
+            # ViewAccess.objects.create(document = new_doc,user=obj.infirmary.user)
             return redirect('get_infirmaries')
         else:
             print(form.errors.as_data())
@@ -557,6 +592,25 @@ def get_insurance_refund_requests(request):
 def get_infirmary_orders(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+    if(request.method=="POST"):
+        request_pk = request.POST["request_pk"]
+        obj = InfirmaryOrder.objects.get(pk=request_pk)
+        
+        obj.patient.wallet -= obj.amount_paid
+        obj.infirmary.wallet += obj.amount_paid
+        obj.patient.save()
+        obj.infirmary.save()
+        file_loc = 'media/profile_pics/'+str(obj.pk)+'.txt'
+        f = open(file_loc, 'w')
+        f.writelines(str(obj.amount_paid))
+        f.writelines('\n')
+        f.writelines(obj.description)
+        f.close()
+        doc_loc = 'profile_pics/'+str(obj.pk)+'.txt'
+        new_doc = MedicalDocuments.objects.create(owner=obj.infirmary.user,medical_doc=doc_loc,is_verified=True,verifier=None)
+        ViewAccess.objects.create(document = new_doc,user=obj.patient.user)
+        ViewAccess.objects.create(document = new_doc,user=obj.infirmary.user)
+
     orders = InfirmaryOrder.objects.filter(infirmary = request.user.infirmary)
     return render (request,"users/get_infirmary_orders.html",{'requests':orders})
 
