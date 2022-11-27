@@ -35,11 +35,13 @@ urlpatterns = [
     path('get_hospitals/',user_views.get_hospitals,name='get_hospitals'),
     path('get_shared_docs/',user_views.get_shared_docs,name='get_shared_docs'),
     path('share_docs/',user_views.share_docs,name='share_docs'),
+    path('resetotp/',user_views.resetotp,name='resetotp'),
 
 
     path('view_share_requests/',user_views.view_share_requests,name='view_share_requests'),
     path('verifydoc/',user_views.verifydoc,name='verifydoc'),
     path('check/',user_views.check,name='check'),
+    path('reset/',user_views.reset,name='reset'),
     path('sign/',user_views.sign,name='sign'),
     path('get_infirmaries/',user_views.get_infirmaries,name='get_infirmaries'),
     path('get_insurancecompanies/',user_views.get_insurancecompanies,name='get_insurancecompanies'),

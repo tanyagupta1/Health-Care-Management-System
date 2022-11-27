@@ -2,6 +2,11 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import *
+
+class ResetUserRegisterForm(forms.Form):
+    email_id = forms.EmailField(label='email_id')
+    newPassword = forms.CharField(widget=forms.PasswordInput())
+    renternewPassword = forms.CharField(widget=forms.PasswordInput())
 class UserRegisterForm(forms.Form):
     email_id = forms.EmailField(label='email_id')
     password1 = forms.CharField(widget=forms.PasswordInput())

@@ -13,11 +13,76 @@ import hashlib
 import base64
 # Create your views here.
 
+
+def resetotp(request):
+    if request.method == 'POST':
+        form = OtpForm(request.POST)
+        if form.is_valid():
+            userkey = request.session.get('urt')
+            otp = request.session.get('otp')
+            if (str(otp) == str(form.cleaned_data.get('otp'))):
+                emailsp = request.session["email"]
+                userss =  User_Auth.objects.filter(email_id = emailsp)[0]
+                userss.password_hash = request.session["pasnewpass"]
+                userss.save()
+                messages.success(request,f'Account reset for {emailsp}!')
+                return redirect("login")
+                
+    
+    form = OtpForm()
+    return render(request,"users/resetotp.html" , {"form": form})
+
+
+
+def reset(request):
+    if request.method=='POST':
+        form = ResetUserRegisterForm(request.POST)
+        if form.is_valid():
+            if (form.cleaned_data.get('newPassword')!=form.cleaned_data.get('renternewPassword') ):
+                messages.error(request,"enter same password in both pasword fiels")
+                return redirect("reset")
+            password = form.cleaned_data.get('renternewPassword')
+            passwordHash = hashlib.sha256(password.encode()).hexdigest()
+            email_id = form.cleaned_data.get('email_id')
+            alllist = User_Auth.objects.filter(email_id = email_id)
+            if(len(alllist)==0):
+                
+                messages.error(request,"No exsisting account, create a new account")
+                return redirect("register")
+                
+            else:
+                request.session["pasnewpass"] = passwordHash
+                request.session["email"] = email_id
+                try:
+                    otp=random.randint(1000,9999)
+                    request.session['otp'] = otp
+                    # email = str(request.user.email_id)
+                    # s = smtplib.SMTP('smtp.gmail.com', 587)
+                    # s.starttls()
+                    # s.login("agarg19030@gmail.com", "kgsbxtxqjjtoddwk")
+                    # s.sendmail("msg", email,"your otp is"+ str(otp))
+                    print("Share OTP is ",otp)
+                    print("Success")
+                    return redirect("resetotp")
+                except:
+                    pass
+                
+            
+            
+
+    form = ResetUserRegisterForm()
+    return render(request,'users/reset.html',{'form':form})
+
+
 def register(request):
     if request.method=='POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
+            if (form.cleaned_data.get('password1')!=form.cleaned_data.get('password2') ):
+                messages.error(request,"enter same password in both pasword fiels")
+                return redirect("register")
             password = form.cleaned_data.get('password1')
+            
             passwordHash = hashlib.sha256(password.encode()).hexdigest()
             email_id = form.cleaned_data.get('email_id')
             h1 = User_Auth.objects.create(
@@ -208,6 +273,7 @@ def doc_share_otp(request):
                 return redirect('share_docs')
             
                 
+                
 
     form = OtpForm()
     return render(request,"users/doc_share_otp.html" , {"form": form})
@@ -299,7 +365,7 @@ def get_shared_docs(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
 
-    if request.method=='POST' and 'view_doc' in request.POST:
+    if request.method=='POST' and 'view_doc' in request.POST and request.user.profile.user_type == "Patient":
         ids = request.POST["dis"]
         request.session["docccccd"] = ids
 
