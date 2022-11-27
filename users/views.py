@@ -20,6 +20,8 @@ def add_money(request):
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     if request.method=='POST':
         amount  = int(request.POST.get("amount"))
+        if(amount<0):
+            return HttpResponseForbidden("negative money not allowed")
         if(request.user.profile.user_type=="Patient"):
             request.user.patient.wallet += amount
             request.user.patient.save()   
@@ -459,6 +461,9 @@ def place_infirmary_order(request,inf_pk):
     if(request.method=="POST"):
         form = InfirmaryOrderForm(request.POST)
         if(form.is_valid()):
+            amount=form.cleaned_data.get('amount_paid')
+            if(amount<0):
+                return HttpResponseForbidden("negative money not allowed")
             obj = form.save(commit=False)
             obj.infirmary= Infirmary.objects.get(pk=inf_pk)
             obj.patient = request.user.patient
