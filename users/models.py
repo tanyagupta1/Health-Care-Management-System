@@ -14,7 +14,7 @@ class User_Auth(models.Model):
     is_authenticated = models.BooleanField(default=True)
 
     def __str__(self):
-        return f'{self.email_id} User_Password'
+        return f'{self.email_id} {self.profile.user_type}'
 
 class Profile(models.Model):
     user = models.OneToOneField(User_Auth ,on_delete=models.CASCADE)

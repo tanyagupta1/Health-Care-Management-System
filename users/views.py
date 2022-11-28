@@ -510,7 +510,7 @@ def share_docs(request):
         form = ViewAccessForm()
         l1 = list(ViewAccess.objects.filter(user__pk=request.user.pk).values_list('document',flat=True))
         form.fields['document'].queryset = MedicalDocuments.objects.filter(pk__in = l1,is_verified=True)
-        form.fields['user'].queryset = User_Auth.objects.exclude(pk=request.user.pk)
+        form.fields['user'].queryset = User_Auth.objects.exclude(profile__user_type='Patient')
         if(request.user.profile.user_type=='Hospital'):
             form.fields['user'].queryset = User_Auth.objects.filter(profile__user_type='Patient')
             form.fields['document'].queryset = MedicalDocuments.objects.filter(owner=request.user,is_verified=True)
