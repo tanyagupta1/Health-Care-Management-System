@@ -17,6 +17,8 @@ from .decorators import user_login_required
 # Create your views here.
 
 
+
+
 def resetotp(request):
     if request.method == 'POST':
         form = OtpForm(request.POST)
@@ -522,6 +524,8 @@ def get_shared_docs(request):
         return redirect("sign")
 
     docsAll = ViewAccess.objects.filter(user=request.user)
+    
+        
     return render (request,"users/get_shared_docs.html",{'docs':docsAll })
 
 
