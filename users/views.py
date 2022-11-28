@@ -129,7 +129,7 @@ def add_money(request):
     user_type = request.user.profile.user_type
     user_object = request.user
 
-    if not (user_type == 'Patient' or user_type == 'Hospital' or user_type == 'InsuranceCompany'):
+    if not (user_type == 'Patient' or user_type == 'InsuranceCompany'):
         return redirect('login')
 
     if not is_user_verified(user_type, user_object):
@@ -389,13 +389,13 @@ def get_user_type(request):
             request.user.profile.user_type = user_type
             request.user.profile.save()
             if(user_type=="Patient"):
-                p1 = Patient.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=True)
+                p1 = Patient.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=False)
             elif(user_type=="Hospital"):
-                h1 = Hospital.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=True)
+                h1 = Hospital.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=False)
             elif(user_type=="Infirmary"):
-                i1 = Infirmary.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=True)
+                i1 = Infirmary.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=False)
             elif(user_type=="InsuranceCompany"):
-                ic1 = InsuranceCompany.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=True)
+                ic1 = InsuranceCompany.objects.create(user=request.user,verification_doc = 'default.jpg',fullname='na',mobile_number = 12345,is_verified=False)
             
             return redirect('verify')
     else:
@@ -476,11 +476,11 @@ def doc_share_otp(request):
 def send_otp():
     otp=random.randint(1000,9999)
             
-    # email = str(request.user.email_id)
-    # s = smtplib.SMTP('smtp.gmail.com', 587)
-    # s.starttls()
-    # s.login("agarg19010@gmail.com", "kgsbxtxqjjtoddwk")
-    # s.sendmail("msg", email,"your otp is"+ str(otp))
+    email = str(request.user.email_id)
+    s = smtplib.SMTP('smtp.gmail.com', 587)
+    s.starttls()
+    s.login("agarg19010@gmail.com", "kgsbxtxqjjtoddwk")
+    s.sendmail("msg", email,"your otp is"+ str(otp))
     print("Share OTP is ",otp)
     print("Success")
 
