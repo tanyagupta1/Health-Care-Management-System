@@ -484,7 +484,7 @@ def send_otp(email):
     print(email)
     s = smtplib.SMTP('smtp.gmail.com', 587)
     s.starttls()
-    s.login("agarg19030@gmail.com", "kgsbxtxqjjtoddwk")
+    s.login("agarg1900@gmail.com", "kgsbxtxqjjtoddwk")
     s.sendmail("msg", email,"your otp is"+ str(otp))
     print("Share OTP is ",otp)
     print("Success")
@@ -588,7 +588,7 @@ def verifydoc(request):
     doc = mydoc.medical_doc.url
     
     docurl = str(mydoc.medical_doc.url)[1:]
-    
+    # docurl = str(mydoc.medical_doc.url)
     print("doc")
     # print(docurl)
     # print(docurl)
