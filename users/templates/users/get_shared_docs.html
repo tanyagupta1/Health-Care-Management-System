@@ -23,7 +23,7 @@
 
 <tr>
     <!-- <td>{{doc.document.pk}}</td> -->
-    
+    <!-- <td><a href="{{doc.document.medical_doc.url}}">View Doc</a></td> -->
     {% if user.profile.user_type == "Hospital" %}
     <td><a href="{{doc.document.medical_doc.url}}">View Doc</a></td>
         {%endif%}

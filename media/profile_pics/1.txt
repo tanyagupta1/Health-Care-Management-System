@@ -1,7 +1,2 @@
-<<<<<<< HEAD
-123
-nasdxcdfcx
-=======
-12345
-my order
->>>>>>> f799ed33e3fe6010805362f6a8c9b9a686953ce4
+1234
+na

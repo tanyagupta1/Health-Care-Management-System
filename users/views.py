@@ -108,10 +108,41 @@ def media_access(request, file):
         view_access = ViewAccess.objects.filter(user = request.user,document = doc).first()
         print(doc,"HI",view_access)
         if(view_access ==None ):
+            doc=None
+            #check profile pic and verification doc
+            if(request.user.profile.user_type=="Patient"):
+                doc=Profile.objects.filter(image="profile_pics/"+file,user=request.user).first()
+                if(doc!=None):
+                    return FileResponse(doc.image)
+                doc=Patient.objects.filter(verification_doc="profile_pics/"+file,user=request.user).first()
+                if(doc!=None):
+                    return FileResponse(doc.verification_doc)
+            elif(request.user.profile.user_type=="Hospital"):
+                doc=Profile.objects.filter(image="profile_pics/"+file,user=request.user).first()
+                if(doc!=None):
+                    return FileResponse(doc.image)
+                doc=Hospital.objects.filter(verification_doc="profile_pics/"+file,user=request.user).first()
+                if(doc!=None):
+                    return FileResponse(doc.verification_doc)
+            elif(request.user.profile.user_type=="Infirmary"):
+                doc=Profile.objects.filter(image="profile_pics/"+file,user=request.user).first()
+                if(doc!=None):
+                    return FileResponse(doc.image)
+                doc=Infirmary.objects.filter(verification_doc="profile_pics/"+file,user=request.user).first()
+                if(doc!=None):
+                    return FileResponse(doc.verification_doc)
+            elif(request.user.profile.user_type=="InsuranceCompany"):
+                doc=Profile.objects.filter(image="profile_pics/"+file,user=request.user).first()
+                if(doc!=None):
+                    return FileResponse(doc.image)
+                doc=InsuranceCompany.objects.filter(verification_doc="profile_pics/"+file,user=request.user).first()
+                if(doc!=None):
+                    return FileResponse(doc.verification_doc)
             return HttpResponseForbidden("Forbidden")
         else:
             return FileResponse(doc.medical_doc)
     except :
+        
         return HttpResponseForbidden("Forbidden")
 #     path,file_name=os.path.split(file)
 #     response=FileResponse(document.medical_doc)
@@ -179,13 +210,26 @@ def profile(request):
                                    instance=request.user.profile)
         user_type_form=''
         if(request.user.profile.user_type=="Patient"):
-            user_type_form = PatientForm(request.POST,request.FILES,instance = request.user.patient)
+            if(request.user.patient.is_verified):
+                user_type_form = PatientForm2(request.POST,request.FILES,instance = request.user.patient)
+            else:
+                user_type_form = PatientForm(request.POST,request.FILES,instance = request.user.patient)
         elif(request.user.profile.user_type=="Hospital"):
-            user_type_form = HospitalForm(request.POST,request.FILES,instance = request.user.hospital)
+            if(request.user.hospital.is_verified):
+                print("HEEEEEEREEEEE")
+                user_type_form = HospitalForm2(request.POST,request.FILES,instance = request.user.hospital)
+            else:
+                user_type_form = HospitalForm(request.POST,request.FILES,instance = request.user.hospital)
         elif(request.user.profile.user_type=="Infirmary"):
-            user_type_form = InfirmaryForm(request.POST,request.FILES,instance = request.user.infirmary)
+            if(request.user.infirmary.is_verified):
+                user_type_form = InfirmaryForm2(request.POST,request.FILES,instance = request.user.infirmary)
+            else:
+                user_type_form = InfirmaryForm(request.POST,request.FILES,instance = request.user.infirmary)
         elif(request.user.profile.user_type=="InsuranceCompany"):
-            user_type_form = InsuranceCompanyForm(request.POST,request.FILES,instance = request.user.insurancecompany)
+            if(request.user.insurancecompany.is_verified):
+                user_type_form = InsuranceCompanyForm2(request.POST,request.FILES,instance = request.user.insurancecompany)
+            else:
+                user_type_form = InsuranceCompanyForm(request.POST,request.FILES,instance = request.user.insurancecompany)
         if p_form.is_valid() and user_type_form.is_valid():
             p_form.save()
             user_type_form.save()
@@ -197,14 +241,31 @@ def profile(request):
         p_form = ProfileUpdateForm(instance=request.user.profile)
         user_type_form=''
         if(request.user.profile.user_type=="Patient"):
-            user_type_form =PatientForm(instance = request.user.patient)
+            if(request.user.patient.is_verified):
+                user_type_form = PatientForm2(instance = request.user.patient)
+            else:
+                user_type_form = PatientForm(instance = request.user.patient)
         elif(request.user.profile.user_type=="Hospital"):
-            user_type_form =HospitalForm(instance = request.user.hospital)
+            if(request.user.hospital.is_verified):
+                print("HEEEEEEREEEEE")
+                user_type_form = HospitalForm2(instance = request.user.hospital)
+            else:
+                user_type_form = HospitalForm(instance = request.user.hospital)
         elif(request.user.profile.user_type=="Infirmary"):
-            user_type_form =InfirmaryForm(instance = request.user.infirmary)
+            if(request.user.infirmary.is_verified):
+                user_type_form = InfirmaryForm2(instance = request.user.infirmary)
+            else:
+                user_type_form = InfirmaryForm(instance = request.user.infirmary)
         elif(request.user.profile.user_type=="InsuranceCompany"):
-            user_type_form =InsuranceCompanyForm(instance = request.user.insurancecompany)
-
+            if(request.user.insurancecompany.is_verified):
+                user_type_form = InsuranceCompanyForm2(instance = request.user.insurancecompany)
+            else:
+                user_type_form = InsuranceCompanyForm(instance = request.user.insurancecompany)
+        if p_form.is_valid() and user_type_form.is_valid():
+            p_form.save()
+            user_type_form.save()
+            messages.success(request, f'Your account has been updated!')
+            return redirect('profile')
         context = {'p_form': p_form,'user_type_form':user_type_form}
         return render(request, 'users/profile.html', context)    
 
@@ -315,6 +376,7 @@ def doc_share_otp(request):
                 print("USER KEY is ",str(userkey))
                 user2 = User_Auth.objects.filter(pk =userkey)[0]
                 h1 = ViewAccess.objects.create(document = medDoc,  user=user2)
+                messages.success(request, 'Sharing success')
                 return redirect('share_docs')
             elif (time.time() - request.session.get('otp_gen_time') > 60):
                 messages.error(request, "OTP expired. Try again.")
