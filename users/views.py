@@ -12,6 +12,7 @@ import random
 import smtplib
 import time
 import hashlib
+import os 
 import base64
 from .decorators import user_login_required
 # Create your views here.
@@ -978,15 +979,18 @@ def get_infirmary_orders(request):
         
 
         
-        file_loc = '/var/FCS_Project_file_upload/media/profile_pics/'+str(obj.pk)+'.txt'
-        f = open(file_loc, 'w')
-        f.writelines(str(obj.amount_paid))
-        f.writelines('\n')
-        f.writelines(obj.description)
-        f.close()
-        tr = "/var/FCS_Project_file_upload/"
-        newurl = tr + file_loc
-        doc_loc = 'profile_pics/'+str(obj.pk)+'.txt'
+        file_loc = '/var/FCS_Project_file_upload/media/profile_pics/order.txt'
+        # os.chmod(file_loc , 777)
+        # f = open(file_loc, 'w')
+        # f.writelines(str(obj.amount_paid))
+        # f.writelines('\n')
+        # f.writelines(obj.description)
+        # f.close()
+        
+        
+        
+        
+        doc_loc = 'profile_pics/'+'order.txt'
         new_doc = MedicalDocuments.objects.create(owner=obj.infirmary.user,medical_doc=doc_loc,is_verified=False,verifier=None)
         request.session["urls"] = file_loc
         request.session["keya"] = request_pk
