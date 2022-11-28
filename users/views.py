@@ -997,7 +997,7 @@ def get_infirmary_orders(request):
         request.session["docids"] = new_doc.pk
         
         h1 = ""
-        with open(newurl , "rb") as f:
+        with open(file_loc , "rb") as f:
             encoded_string = base64.b64encode(f.read())
             h1 =  hashlib.sha256(encoded_string).hexdigest()
         request.session["hash"] = h1
