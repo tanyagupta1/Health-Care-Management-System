@@ -81,7 +81,7 @@ class InsuranceCompany(models.Model):
 class MedicalDocuments(models.Model):
     unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     owner = models.ForeignKey(User_Auth,on_delete=models.CASCADE,null=True)
-    medical_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
+    medical_doc= models.FileField(upload_to='profile_pics',null=True)
     is_verified = models.BooleanField(default=False,null=True) 
     verifier = models.ForeignKey(Hospital,on_delete=models.CASCADE,null=True)
     def __str__(self):
