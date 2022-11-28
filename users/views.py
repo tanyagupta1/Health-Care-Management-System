@@ -1022,7 +1022,7 @@ def signI(request):
         obj.save()
         ViewAccess.objects.create(document = mydoc,user=obj.patient.user)
         ViewAccess.objects.create(document = mydoc,user=obj.infirmary.user)
-
+        Transactions.objects.create(sender = obj.patient.user,receiver=obj.infirmary.user,amount=obj.amount_paid)
         return redirect("check")
     
 
