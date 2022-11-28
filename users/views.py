@@ -593,8 +593,12 @@ def verifydoc(request):
     print("doc")
     # print(docurl)
     # print(docurl)
+    # tr = "/var/FCS_Project_file_upload/"
+    # docurl  = tr + docurl
+
     tr = "/var/FCS_Project_file_upload/"
     docurl  = tr + docurl
+
     print(docurl)
     h1 = ""
     with open(docurl , "rb") as f:
