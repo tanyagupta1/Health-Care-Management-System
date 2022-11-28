@@ -118,7 +118,7 @@ async function loadContract() {
       success: function(data){          
                 console.log('response received');
                 
-                // window.open("https://192.168.2.244/" + docurl, "_blank");
+                window.open("https://192.168.2.244/" + docurl, "_blank");
                 window.location.href = "{% url 'get_shared_docs' %}" ;
             }
             });
