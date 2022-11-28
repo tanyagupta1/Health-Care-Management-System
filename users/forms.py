@@ -35,7 +35,7 @@ class ProfileUpdateForm(forms.ModelForm):
 
 class UserTypeForm(forms.Form):
     your_type = forms.ChoiceField(choices=USER_CHOICES)
-    otp = forms.CharField(label='otp', max_length=10)
+    otp = forms.CharField(label='otp', max_length=10 ,widget= forms.TextInput(attrs={'class':'use-keyboard-input'}))
 
 
 class LoginForm(forms.Form):
@@ -44,7 +44,7 @@ class LoginForm(forms.Form):
     
 
 class OtpForm(forms.Form):
-  otp = forms.CharField(label='otp', max_length=10)
+  otp = forms.CharField(label='otp', max_length=10,widget= forms.TextInput(attrs={'class':'use-keyboard-input'}))
 
 
 class PatientForm(forms.ModelForm):
