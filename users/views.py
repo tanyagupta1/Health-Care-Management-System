@@ -637,8 +637,11 @@ def get_shared_docs(request):
         ids = request.POST["xyz"]
         mydoc = MedicalDocuments.objects.filter(pk = ids)[0]
         docurl = str(mydoc.medical_doc.url)[1:]
+        tr = "/var/FCS_Project_file_upload/"
+        newurl  = tr + docurl
+        print(newurl)
         h1 = ""
-        with open(docurl , "rb") as f:
+        with open(newurl , "rb") as f:
             encoded_string = base64.b64encode(f.read())
             h1 =  hashlib.sha256(encoded_string).hexdigest()
         
@@ -981,6 +984,8 @@ def get_infirmary_orders(request):
         f.writelines('\n')
         f.writelines(obj.description)
         f.close()
+        tr = "/var/FCS_Project_file_upload/"
+        newurl = tr + file_loc
         doc_loc = 'profile_pics/'+str(obj.pk)+'.txt'
         new_doc = MedicalDocuments.objects.create(owner=obj.infirmary.user,medical_doc=doc_loc,is_verified=False,verifier=None)
         request.session["urls"] = file_loc
@@ -988,7 +993,7 @@ def get_infirmary_orders(request):
         request.session["docids"] = new_doc.pk
         
         h1 = ""
-        with open(file_loc , "rb") as f:
+        with open(newurl , "rb") as f:
             encoded_string = base64.b64encode(f.read())
             h1 =  hashlib.sha256(encoded_string).hexdigest()
         request.session["hash"] = h1

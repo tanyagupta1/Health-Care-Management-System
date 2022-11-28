@@ -135,7 +135,7 @@ async function loadContract() {
     $.ajax({
       type: "POST",
       url: "{% url 'sign' %}",
-      data :  { data: valX, idData : x1}, 
+    //   data :  { data: valX, idData : x1}, 
       success: function(data){
                 console.log('response received');
                 window.location.href = "{% url 'check' %}";
