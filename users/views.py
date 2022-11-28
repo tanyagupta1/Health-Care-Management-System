@@ -978,7 +978,7 @@ def get_infirmary_orders(request):
         
 
         
-        file_loc = 'media/profile_pics/'+str(obj.pk)+'.txt'
+        file_loc = '/var/FCS_Project_file_upload/media/profile_pics/'+str(obj.pk)+'.txt'
         f = open(file_loc, 'w')
         f.writelines(str(obj.amount_paid))
         f.writelines('\n')
