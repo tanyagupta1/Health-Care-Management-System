@@ -485,7 +485,7 @@ def send_otp(email):
     print(email)
     s = smtplib.SMTP('smtp.gmail.com', 587)
     s.starttls()
-    s.login("agarg1900@gmail.com", "kgsbxtxqjjtoddwk")
+    s.login("agarg19030@gmail.com", "kgsbxtxqjjtoddwk")
     s.sendmail("msg", email,"your otp is"+ str(otp))
     print("Share OTP is ",otp)
     print("Success")
