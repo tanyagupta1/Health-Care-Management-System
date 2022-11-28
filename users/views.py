@@ -470,10 +470,13 @@ def get_infirmaries(request):
         print(infirmary_pk)
         print("infirmary is: ",Infirmary.objects.get(pk=infirmary_pk))
         return redirect("/place_infirmary_order/"+infirmary_pk)
+
+    
     infirmaries = Infirmary.objects.all()
     myFilter = InfirmaryFilter(request.GET,queryset=infirmaries)
     infirmaries = myFilter.qs
-    return render (request,"users/get_infirmaries.html",{'infirmaries':infirmaries,'myFilter':myFilter})
+    orders = InfirmaryOrder.objects.filter(patient = request.user.patient)
+    return render (request,"users/get_infirmaries.html",{'infirmaries':infirmaries,'myFilter':myFilter , "orders": orders})
 
 @user_login_required
 def get_insurancecompanies(request):

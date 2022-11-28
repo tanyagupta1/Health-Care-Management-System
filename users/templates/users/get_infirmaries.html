@@ -33,5 +33,39 @@
 {% endfor %}
 </table>
 
+
+
+<h2>Past order history </h2>
+
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <!-- <th>Doc</th> -->
+        <th>Amount</th>
+        <th>Description</th>
+        <th>Status</th>
+      </tr>
+{% for r in orders%}
+
+<tr>
+    <td>{{r.infirmary.fullname}}</td>
+    
+    <td>{{r.amount_paid}}</td>
+    <td>{{r.description}}</td>
+    <td>
+        {% if r.is_fulfilled   %}
+        Confirmed
+        {% else %}
+        
+      Pending
+        {% endif %}
+    </td>
+
+</tr>
+
+{% endfor %}
+</table>
+
 </div>
 {% endblock content %}
