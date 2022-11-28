@@ -13,6 +13,7 @@ import smtplib
 import time
 import hashlib
 import base64
+from .decorators import user_login_required
 # Create your views here.
 
 
@@ -75,6 +76,8 @@ def reset(request):
     form = ResetUserRegisterForm()
     return render(request,'users/reset.html',{'form':form})
 
+
+@user_login_required
 def add_money(request): 
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
@@ -92,6 +95,8 @@ def add_money(request):
 
     return render(request,'users/add_money.html')
 
+
+@user_login_required
 def media_access(request, file): 
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
@@ -108,6 +113,8 @@ def media_access(request, file):
 #     path,file_name=os.path.split(file)
 #     response=FileResponse(document.medical_doc)
 #     return response
+
+
 
 def register(request):
     if request.method=='POST':
@@ -159,7 +166,7 @@ def login(request):
     return render(request,'users/login.html',{'form':form})        
 
 
-
+@user_login_required
 def profile(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
@@ -199,7 +206,7 @@ def profile(request):
         return render(request, 'users/profile.html', context)    
 
 
-
+@user_login_required
 def verify_user(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
@@ -230,7 +237,7 @@ def verify_user(request):
     }
     return render(request, 'users/verify.html', context)
 
-
+@user_login_required
 def get_user_type(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
@@ -290,6 +297,8 @@ def after_login(request):
                 # messages.error(request,"Sorry. some trouble")
         return redirect('user_type')         # return redirect('register')
 
+
+@user_login_required
 def doc_share_otp(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
@@ -313,6 +322,8 @@ def doc_share_otp(request):
     form = OtpForm()
     return render(request,"users/doc_share_otp.html" , {"form": form})
 
+
+@user_login_required
 def ShareDocP(request , pk):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
@@ -348,7 +359,7 @@ def ShareDocP(request , pk):
         "patientsAll" : patientsAll, 
     })
 
-
+@user_login_required
 def get_hospitals(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
@@ -368,6 +379,7 @@ def get_hospitals(request):
 @csrf_exempt
 def sign(request):
     if request.method=='POST':
+        
         id_data  = request.POST["idData"];
         hashVal = request.POST["data"];
         mydoc = MedicalDocuments.objects.filter(pk = id_data)[0]
@@ -378,14 +390,29 @@ def sign(request):
     h1 = request.session['hash']
     docid = request.session['ids']
     return render(request , "users/sign.html" , {"hash" : h1 , "doc" : docid} )
+
     
 
 
-
+@csrf_exempt
 def verifydoc(request): 
+    emailsp = request.session["user"]
+    request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+    if request.method == "POST":
+        print("we were hre")
+        return redirect("login")
+
+        
+        
+
+    print("we were hre2")
     ids = request.session["docccccd"]
     mydoc = MedicalDocuments.objects.filter(pk = ids)[0]
+    doc = mydoc.medical_doc.url
+    
     docurl = str(mydoc.medical_doc.url)[1:]
+    
+    print("doc")
     # print(docurl)
     # print(docurl)
     h1 = ""
@@ -393,8 +420,10 @@ def verifydoc(request):
         encoded_string = base64.b64encode(f.read())
         h1 =  hashlib.sha256(encoded_string).hexdigest()
     print(h1)
-    return render(request , "users/verifydoc.html" , {"hash" : h1 , "doc" : ids }); 
+    return render(request , "users/verifydoc.html" , {"hash" : h1 , "doc" : ids , "docurl" : docurl    }); 
 
+
+@user_login_required
 def get_shared_docs(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
@@ -426,11 +455,13 @@ def get_shared_docs(request):
 
    
     
-
+@user_login_required
 def check(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     return render(request, "users/check.html");
+
+@user_login_required
 def get_infirmaries(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
@@ -444,7 +475,7 @@ def get_infirmaries(request):
     infirmaries = myFilter.qs
     return render (request,"users/get_infirmaries.html",{'infirmaries':infirmaries,'myFilter':myFilter})
 
-
+@user_login_required
 def get_insurancecompanies(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
@@ -456,6 +487,8 @@ def get_insurancecompanies(request):
     insurancecompanies = myFilter.qs
     return render (request,"users/get_insurancecompanies.html",{'insurancecompanies':insurancecompanies,'myFilter':myFilter})
 
+
+@user_login_required
 def upload_medical_doc(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
@@ -483,6 +516,7 @@ def upload_medical_doc(request):
         form.fields['verifier'].queryset = Hospital.objects.filter(pk=request.user.hospital.pk)
     return render(request, 'users/upload_medical_doc.html', {'form': form,'docs':docs })
 
+@user_login_required
 def share_docs(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]   
@@ -509,7 +543,7 @@ def share_docs(request):
                 pass
 
     else:
-        form = ViewAccessForm()
+        form = ViewAccessForm() 
         l1 = list(ViewAccess.objects.filter(user__pk=request.user.pk).values_list('document',flat=True))
         form.fields['document'].queryset = MedicalDocuments.objects.filter(pk__in = l1,is_verified=True)
         form.fields['user'].queryset = User_Auth.objects.exclude(pk=request.user.pk)
@@ -519,6 +553,7 @@ def share_docs(request):
     return render(request, 'users/share_docs.html', {'form': form })
 
 # #@loggin_required
+@user_login_required
 def place_infirmary_order(request,inf_pk):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
@@ -557,6 +592,7 @@ def place_infirmary_order(request,inf_pk):
     return render(request, 'users/place_infirmary_order.html', {'form': form})
 
 # @login_required
+@user_login_required
 def request_insurance_refund(request,insurance_pk):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
@@ -582,13 +618,17 @@ def request_insurance_refund(request,insurance_pk):
     return render(request, 'users/request_insurance_refund.html', {'form': form})
 
 #@loggin_required
+@user_login_required
 def get_insurance_refund_requests(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     refund_requests = InsuranceRefund.objects.filter(insurance_company = request.user.insurancecompany)
     return render (request,"users/get_insurance_refund_requests.html",{'requests':refund_requests})
 
+
+
 #@loggin_required
+@user_login_required
 def get_infirmary_orders(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
@@ -596,10 +636,8 @@ def get_infirmary_orders(request):
         request_pk = request.POST["request_pk"]
         obj = InfirmaryOrder.objects.get(pk=request_pk)
         
-        obj.patient.wallet -= obj.amount_paid
-        obj.infirmary.wallet += obj.amount_paid
-        obj.patient.save()
-        obj.infirmary.save()
+
+        
         file_loc = 'media/profile_pics/'+str(obj.pk)+'.txt'
         f = open(file_loc, 'w')
         f.writelines(str(obj.amount_paid))
@@ -607,14 +645,69 @@ def get_infirmary_orders(request):
         f.writelines(obj.description)
         f.close()
         doc_loc = 'profile_pics/'+str(obj.pk)+'.txt'
-        new_doc = MedicalDocuments.objects.create(owner=obj.infirmary.user,medical_doc=doc_loc,is_verified=True,verifier=None)
-        ViewAccess.objects.create(document = new_doc,user=obj.patient.user)
-        ViewAccess.objects.create(document = new_doc,user=obj.infirmary.user)
+        new_doc = MedicalDocuments.objects.create(owner=obj.infirmary.user,medical_doc=doc_loc,is_verified=False,verifier=None)
+        request.session["urls"] = file_loc
+        request.session["keya"] = request_pk
+        request.session["docids"] = new_doc.pk
+        
+        h1 = ""
+        with open(file_loc , "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+            h1 =  hashlib.sha256(encoded_string).hexdigest()
+        request.session["hash"] = h1
+        return redirect ("signI")
+
+        
+        
+        # # payment check krlo
+        # obj.patient.wallet -= obj.amount_paid
+        # obj.infirmary.wallet += obj.amount_paid
+        # obj.is_fulfilled = True
+        # obj.patient.save()
+        # obj.infirmary.save()
+        
+        # obj.save()
+        # new_doc = MedicalDocuments.objects.create(owner=obj.infirmary.user,medical_doc=doc_loc,is_verified=True,verifier=None)
+        # ViewAccess.objects.create(document = new_doc,user=obj.patient.user)
+        # ViewAccess.objects.create(document = new_doc,user=obj.infirmary.user)
 
     orders = InfirmaryOrder.objects.filter(infirmary = request.user.infirmary)
     return render (request,"users/get_infirmary_orders.html",{'requests':orders})
 
+
+
+
+@csrf_exempt
+def signI(request):
+    if request.method=='POST':
+        
+        request_pk = request.session["keya"]
+        id_data  = request.session["docids"];
+        
+        
+        mydoc = MedicalDocuments.objects.filter(pk = id_data)[0]
+        mydoc.is_verified = True
+        mydoc.save()
+        
+        obj = InfirmaryOrder.objects.get(pk=request_pk)
+        obj.patient.wallet -= obj.amount_paid
+        obj.infirmary.wallet += obj.amount_paid
+        obj.is_fulfilled = True
+        obj.patient.save()
+        obj.infirmary.save()
+        obj.save()
+        ViewAccess.objects.create(document = mydoc,user=obj.patient.user)
+        ViewAccess.objects.create(document = mydoc,user=obj.infirmary.user)
+
+        return redirect("check")
+    
+
+
+    h1 = request.session['hash']
+    docid = request.session['docids']
+    return render(request , "users/signI.html" , {"hash" : h1 , "doc" : docid} )
 #@loggin_required
+@user_login_required
 def delete_doc(request,doc_pk):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
@@ -623,6 +716,7 @@ def delete_doc(request,doc_pk):
 
 
 #@loggin_required
+@user_login_required
 def payback(request,refund_pk):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
@@ -634,6 +728,8 @@ def payback(request,refund_pk):
     InsuranceRefund.objects.get(pk=refund_pk).delete()
     return redirect('get_insurance_refund_requests')
 
+
+@user_login_required
 def view_share_requests(request):
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]

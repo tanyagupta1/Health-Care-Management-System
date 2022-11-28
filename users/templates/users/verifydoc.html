@@ -1,6 +1,6 @@
 <html>
     <head>
-    
+   
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
@@ -18,7 +18,7 @@
     <script>
        var hashval = "{{hash}}"; 
        var docid = "{{doc}}"
-       
+       var docurl = "{{docurl}}"
        
        
        
@@ -85,34 +85,7 @@ async function loadContract() {
     
     
     
-        async function add(x1 , x2 ){
-            
-           
-            const accounts = await window.web3.eth.getAccounts();
-            
-            const account=accounts[0];
-            console.log(accounts);
-            // alert(typeof(account))
-            // console.log(to+" "+message);
-            // var c1=await window.contract.methods.getMessage().call();
-
-            var c=await window.contract.methods.setDocID(x1,x2).send({from:account}, 
-            function(error, result){
-            if(!error)
-            {console.log(JSON.stringify(result));
-            console.log("jjj")}
-            
-            else
-            {
-            console.error(error);
-        console.log("fjcn")}
-                });
-            console.log(c);
-            console.log("c ended")
-           
-        }
-
-        async function getValue(x1){
+           async function getValue(x1){
             console.log("d ended")
             
             var d =await window.contract.methods.getDocumentHash(x1).call();
@@ -138,15 +111,18 @@ async function loadContract() {
     else{
         console.log(false); 
     }
-    // $.ajax({
-    //   type: "POST",
-    //   url: "{% url 'sign' %}",
-    //   data :  { data: valX, idData : x1}, 
-    //   success: function(data){
-    //             console.log('response received');
-    //             window.location.href = "{% url 'check' %}";
-    //         }
-    //         });
+    $.ajax({
+      type: "POST",
+      url: "{% url 'verifydoc' %}",
+      data :  { idData : x1 , vaL: 1},
+      success: function(data){          
+                console.log('response received');
+                window.open("http://127.0.0.1:8000/" + docurl, "_blank");
+                window.location.href = "{% url 'get_shared_docs' %}" ;
+            }
+            });
+    
+            
 
 
 }

@@ -100,6 +100,7 @@ class InfirmaryOrder(models.Model):
     doc = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
     amount_paid = models.IntegerField(default=0,null=True)
     description = models.TextField(default="na",null=True)
+    is_fulfilled = models.BooleanField(default=False,null=True)
     def __str__(self):
         return f'{self.patient.fullname} {self.infirmary.fullname} Infirmary Order'
 

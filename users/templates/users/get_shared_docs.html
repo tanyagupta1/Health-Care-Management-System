@@ -6,6 +6,7 @@
 
 </div>
 <div>
+    
 <table border="1">
     <tr>
         {% if user.profile.user_type == "Hospital" %}
@@ -25,7 +26,7 @@
     {% if user.profile.user_type == "Hospital" %}
     <td><a href="{{doc.document.medical_doc.url}}">View Doc</a></td>
         {%endif%}
-    
+        <td><a href="{{doc.document.medical_doc.url}}">{{doc.document.medical_doc.url}}</a></td>
     {% if doc.document.is_verified %}
 
     <td>Verified</td>

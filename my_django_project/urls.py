@@ -44,6 +44,7 @@ urlpatterns = [
     path('check/',user_views.check,name='check'),
     path('reset/',user_views.reset,name='reset'),
     path('sign/',user_views.sign,name='sign'),
+    path('signI/',user_views.signI,name='signI'),
     path('get_infirmaries/',user_views.get_infirmaries,name='get_infirmaries'),
     path('get_insurancecompanies/',user_views.get_insurancecompanies,name='get_insurancecompanies'),
     path('upload_medical_doc/',user_views.upload_medical_doc,name='upload_medical_doc'), 
