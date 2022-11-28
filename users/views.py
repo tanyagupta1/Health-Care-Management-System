@@ -70,7 +70,7 @@ def reset(request):
                 request.session["pasnewpass"] = passwordHash
                 request.session["email"] = email_id
                 try:
-                    request.session['otp'] = send_otp()
+                    request.session['otp'] = send_otp(emailsp)
                     request.session['otp_gen_time'] = time.time()
                     return redirect("resetotp")
                 except:
@@ -236,8 +236,11 @@ def login(request):
             try:
                 password = form.cleaned_data.get('password')
                 email = form.cleaned_data.get('email')
+                print('1')
                 passwordHash = hashlib.sha256(password.encode()).hexdigest()
+                print('13')
                 passReterive  =User_Auth.objects.filter(email_id = email)[0].password_hash
+                print('123')
                 if ( passwordHash==passReterive):
                     #user ko set krna hai 
                     request.user = User_Auth.objects.filter(email_id = email)[0]
@@ -404,6 +407,7 @@ def get_user_type(request):
 
 
 def after_login(request):
+    print("reached")
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     try:
@@ -416,7 +420,7 @@ def after_login(request):
         return redirect("login")
     else:
         try:
-            request.session['otp'] = send_otp()
+            request.session['otp'] = send_otp(emailsp)
             request.session['otp_gen_time'] = time.time()
             email = str(request.user.email_id)
         except Exception as e:
@@ -473,13 +477,14 @@ def doc_share_otp(request):
     form = OtpForm()
     return render(request,"users/doc_share_otp.html" , {"form": form})
 
-def send_otp():
+def send_otp(email):
     otp=random.randint(1000,9999)
             
-    email = str(request.user.email_id)
+    # email = str(request.user.email_id)
+    print(email)
     s = smtplib.SMTP('smtp.gmail.com', 587)
     s.starttls()
-    s.login("agarg19010@gmail.com", "kgsbxtxqjjtoddwk")
+    s.login("agarg19030@gmail.com", "kgsbxtxqjjtoddwk")
     s.sendmail("msg", email,"your otp is"+ str(otp))
     print("Share OTP is ",otp)
     print("Success")
@@ -498,7 +503,7 @@ def ShareDocP(request , pk):
         request.session['drt'] = pk
         print("hey")
         try:
-            request.session['otp'] = send_otp()
+            request.session['otp'] = send_otp(emailsp)
             request.session['otp_gen_time'] = time.time()
             return redirect("doc_share_otp")
         except:
@@ -797,7 +802,7 @@ def share_docs(request):
             request.session['urt'] = form.cleaned_data.get('user').pk
             request.session['drt'] = form.cleaned_data.get('document').pk
             try:
-                request.session['otp'] = send_otp()
+                request.session['otp'] = send_otp(emailsp)
                 request.session['otp_gen_time'] = time.time()
                 return redirect("doc_share_otp")
             except:
