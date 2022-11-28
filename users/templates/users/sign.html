@@ -130,12 +130,12 @@ async function loadContract() {
         async function doall(x1 , x2){
             await connectMetamask();
     await load();
-    await add(x1, x2);
+    // await add(x1, x2);
     valX = await getValue(x1); 
     $.ajax({
       type: "POST",
       url: "{% url 'sign' %}",
-    //   data :  { data: valX, idData : x1}, 
+      data :  { data: valX, idData : x1}, 
       success: function(data){
                 console.log('response received');
                 window.location.href = "{% url 'check' %}";
