@@ -16,6 +16,10 @@ import base64
 from .decorators import user_login_required
 # Create your views here.
 
+#     ('Patient','Patient'),
+    # ('Hospital','Hospital'),
+    # ('Infirmary','Infirmary'),
+    # ('InsuranceCompany','InsuranceCompany')
 
 def resetotp(request):
     if request.method == 'POST':
@@ -76,11 +80,59 @@ def reset(request):
     form = ResetUserRegisterForm()
     return render(request,'users/reset.html',{'form':form})
 
+# c1 user type decided 
+# c2 specific type of user access
+# c3 confirmed user
+
+def is_user_verified(user_type , user_object):
+    if user_type == 'Patient':
+        return user_object.patient.is_verified
+    elif user_type == 'Hospital':
+        return user_object.hospital.is_verified
+    elif user_type == 'Infirmary':
+        return user_object.infirmary.is_verified
+    elif user_type == 'InsuranceCompany':
+        return user_object.insurancecompany.is_verified
+    else:
+        return False
+
+def is_patient(user):
+    if user.profile.user_type == 'Patient': return True
+    else: return False
+
+def is_hospital(user):
+    if user.profile.user_type == 'Hospital': return True
+    else: return False
+
+def is_infirmary(user):
+    if user.profile.user_type == 'Infirmary': return True
+    else: return False
+
+def is_insurance_company(user):
+    if user.profile.user_type == 'InsuranceCompany': return True
+    else: return False
+
+
 
 @user_login_required
 def add_money(request): 
+    # all p, i , ins
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+    # whether user is confimed
+
+    if request.user.profile.user_type_decided == False: 
+        return redirect('login')
+    
+    user_type = request.user.profile.user_type
+    user_object = request.user
+
+    if not (user_type == 'Patient' or user_type == 'Hospital' or user_type == 'InsuranceCompany'):
+        return redirect('login')
+
+    if not is_user_verified(user_type, user_object):
+        return redirect('login')
+    
     if request.method=='POST':
         amount  = int(request.POST.get("amount"))
         if(amount<0):
@@ -171,8 +223,14 @@ def login(request):
 
 @user_login_required
 def profile(request):
+    # c1 
+    
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+
+    if request.user.profile.user_type_decided == False: 
+        return redirect('login')
+    
     if request.method == 'POST':
         p_form = ProfileUpdateForm(request.POST,
                                    request.FILES,
@@ -211,8 +269,14 @@ def profile(request):
 
 @user_login_required
 def verify_user(request):
+    # c1
+    
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+
+    if request.user.profile.user_type_decided == False: 
+        return redirect('login')
+
     if request.method == 'POST':  
         if(request.user.profile.user_type=="Patient"):   
             v_form=PatientForm(request.POST, instance=request.user.patient)
@@ -301,8 +365,25 @@ def after_login(request):
 
 @user_login_required
 def doc_share_otp(request):
+    # c1
+    # c2 h  , p 
+    # c3
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+
+    if request.user.profile.user_type_decided == False: 
+        return redirect('login')
+    
+    user_type = request.user.profile.user_type
+    user_object = request.user
+
+    print(user_type)
+    if not (user_type == 'Patient' or user_type == 'Hospital'):
+        return redirect('login')
+
+    if not is_user_verified(user_type, user_object):
+        return redirect('login')
+    
     if request.method == 'POST':
         form = OtpForm(request.POST)
         if form.is_valid():
@@ -373,8 +454,23 @@ def ShareDocP(request , pk):
 
 @user_login_required
 def get_hospitals(request):
+    # c1 m , c2  p  , c3 
+
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+
+    if request.user.profile.user_type_decided == False: 
+        return redirect('login')
+    
+    user_type = request.user.profile.user_type
+    user_object = request.user
+
+    if not (user_type == 'Patient'):
+        return redirect('login')
+
+    if not is_user_verified(user_type, user_object):
+        redirect('login')
+
     if request.method=='POST':
         hospital_pk = request.POST["hospital_pk"]
         print(hospital_pk)
@@ -437,8 +533,22 @@ def verifydoc(request):
 
 @user_login_required
 def get_shared_docs(request):
+    # all conditions
+
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+
+    if request.user.profile.user_type_decided == False: 
+        return redirect('login')
+    
+    user_type = request.user.profile.user_type
+    user_object = request.user
+
+    # if not (user_type == 'Patient' or user_type == 'Hospital' or user_type == 'InsuranceCompany'):
+    #     redirect('login')
+
+    if not is_user_verified(user_type, user_object):
+        return redirect('login')
 
     if request.method=='POST' and 'view_doc' in request.POST and request.user.profile.user_type == "Patient":
         ids = request.POST["dis"]
@@ -469,14 +579,44 @@ def get_shared_docs(request):
     
 @user_login_required
 def check(request):
+    # @ c1 , c3
+
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+
+    if request.user.profile.user_type_decided == False: 
+        return redirect('login')
+    
+    user_type = request.user.profile.user_type
+    user_object = request.user
+
+    # if not (user_type == 'Patient' or user_type == 'Hospital' or user_type == 'InsuranceCompany'):
+    #     redirect('login')
+
+    if not is_user_verified(user_type, user_object):
+        return redirect('login')
+    
     return render(request, "users/check.html");
 
 @user_login_required
 def get_infirmaries(request):
+    # , = c1  , p   , c3
+
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+
+    if request.user.profile.user_type_decided == False: 
+        return redirect('login')
+    
+    user_type = request.user.profile.user_type
+    user_object = request.user
+
+    if not (user_type == 'Patient'):
+        return redirect('login')
+
+    if not is_user_verified(user_type, user_object):
+        return redirect('login')
+
     if request.method=='POST':
         infirmary_pk = request.POST["infirmary_pk"]
         print(infirmary_pk)
@@ -492,8 +632,23 @@ def get_infirmaries(request):
 
 @user_login_required
 def get_insurancecompanies(request):
+    # , = c1  , p   , c3
+    
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+
+    if request.user.profile.user_type_decided == False: 
+        return redirect('login')
+    
+    user_type = request.user.profile.user_type
+    user_object = request.user
+
+    if not (user_type == 'Patient'):
+        return redirect('login')
+
+    if not is_user_verified(user_type, user_object):
+        return redirect('login')
+
     if request.method=='POST':
         insurance_pk = request.POST["insurance_pk"]
         return redirect("/request_insurance_refund/"+insurance_pk)
@@ -505,8 +660,23 @@ def get_insurancecompanies(request):
 
 @user_login_required
 def upload_medical_doc(request):
+    # , = c1  , p h   , c3
+
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+    
+    if request.user.profile.user_type_decided == False: 
+        return redirect('login')
+    
+    user_type = request.user.profile.user_type
+    user_object = request.user
+
+    if not (user_type == 'Patient' or user_type == 'Hospital'):
+        return redirect('login')
+
+    if not is_user_verified(user_type, user_object):
+        return redirect('login')
+
     if request.method=='POST' and 'upload_doc' in request.POST:
         form = MedicalDocumentsForm(request.POST,request.FILES)
         if form.is_valid():
@@ -533,8 +703,23 @@ def upload_medical_doc(request):
 
 @user_login_required
 def share_docs(request):
+        # , = c1  , p h    , c3
+    
     emailsp = request.session["user"]
-    request.user = User_Auth.objects.filter(email_id = emailsp)[0]   
+    request.user = User_Auth.objects.filter(email_id = emailsp)[0]  
+
+    if request.user.profile.user_type_decided == False: 
+        return redirect('login')
+    
+    user_type = request.user.profile.user_type
+    user_object = request.user
+
+    if not (user_type == 'Patient' or user_type == 'Hospital'):
+        return redirect('login')
+
+    if not is_user_verified(user_type, user_object):
+        return redirect('login')
+ 
     if request.method=='POST' and 'share' in request.POST:
         form = ViewAccessForm(request.POST)
         if form.is_valid():
@@ -563,8 +748,23 @@ def share_docs(request):
 # #@loggin_required
 @user_login_required
 def place_infirmary_order(request,inf_pk):
+    # , = c1  , p   , c3
+    
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+
+    if request.user.profile.user_type_decided == False: 
+        return redirect('login')
+    
+    user_type = request.user.profile.user_type
+    user_object = request.user
+
+    if not (user_type == 'Patient'):
+        return redirect('login')
+
+    if not is_user_verified(user_type, user_object):
+        return redirect('login')
+
     if(request.method=="POST"):
         form = InfirmaryOrderForm(request.POST)
         if(form.is_valid()):
@@ -605,8 +805,23 @@ def place_infirmary_order(request,inf_pk):
 # @login_required
 @user_login_required
 def request_insurance_refund(request,insurance_pk):
+        # , = c1  , p   , c3
+    
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+
+    if request.user.profile.user_type_decided == False: 
+        return redirect('login')
+    
+    user_type = request.user.profile.user_type
+    user_object = request.user
+
+    if not (user_type == 'Patient'):
+        return redirect('login')
+
+    if not is_user_verified(user_type, user_object):
+        return redirect('login')
+
     if(request.method=="POST"):
         form = InsuranceRefundForm(request.POST)
         if(form.is_valid()):
@@ -631,8 +846,23 @@ def request_insurance_refund(request,insurance_pk):
 #@loggin_required
 @user_login_required
 def get_insurance_refund_requests(request):
+        # , = c1  , ins   , c3
+    
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+
+    if request.user.profile.user_type_decided == False: 
+        return redirect('login')
+    
+    user_type = request.user.profile.user_type
+    user_object = request.user
+
+    if not (user_type == 'InsuranceCompany'):
+        return redirect('login')
+
+    if not is_user_verified(user_type, user_object):
+        return redirect('login')
+
     refund_requests = InsuranceRefund.objects.filter(insurance_company = request.user.insurancecompany)
     return render (request,"users/get_insurance_refund_requests.html",{'requests':refund_requests})
 
@@ -641,8 +871,23 @@ def get_insurance_refund_requests(request):
 #@loggin_required
 @user_login_required
 def get_infirmary_orders(request):
+        # , = c1  , i   , c3
+    
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+
+    if request.user.profile.user_type_decided == False: 
+        return redirect('login')
+    
+    user_type = request.user.profile.user_type
+    user_object = request.user
+
+    if not (user_type == 'Infirmary'):
+        return redirect('login')
+
+    if not is_user_verified(user_type, user_object):
+        return redirect('login')
+
     if(request.method=="POST"):
         request_pk = request.POST["request_pk"]
         obj = InfirmaryOrder.objects.get(pk=request_pk)
@@ -720,8 +965,23 @@ def signI(request):
 #@loggin_required
 @user_login_required
 def delete_doc(request,doc_pk):
+        # , = c1  , ph   , c3
+    
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+
+    if request.user.profile.user_type_decided == False: 
+        return redirect('login')
+    
+    user_type = request.user.profile.user_type
+    user_object = request.user
+
+    if not (user_type == 'Patient' or user_type == 'Hospital'):
+        return redirect('login')
+
+    if not is_user_verified(user_type, user_object):
+        return redirect('login')
+
     MedicalDocuments.objects.get(pk=doc_pk).delete()
     return redirect('upload_medical_doc')
 
@@ -729,8 +989,23 @@ def delete_doc(request,doc_pk):
 #@loggin_required
 @user_login_required
 def payback(request,refund_pk):
+        # , = c1  , ins   , c3
+    
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+
+    if request.user.profile.user_type_decided == False: 
+        return redirect('login')
+    
+    user_type = request.user.profile.user_type
+    user_object = request.user
+
+    if not (user_type == 'InsuranceCompany'):
+        return redirect('login')
+
+    if not is_user_verified(user_type, user_object):
+        return redirect('login')
+
     refund_request = InsuranceRefund.objects.get(pk = refund_pk)
     request.user.insurancecompany.wallet -= refund_request.refund_amount
     refund_request.patient.wallet+= refund_request.refund_amount
@@ -743,8 +1018,23 @@ def payback(request,refund_pk):
 
 @user_login_required
 def view_share_requests(request):
+        # , = c1  , h   , c3
+    
     emailsp = request.session["user"]
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
+
+    if request.user.profile.user_type_decided == False: 
+        return redirect('login')
+    
+    user_type = request.user.profile.user_type
+    user_object = request.user
+
+    if not (user_type == 'Hospital'):
+        return redirect('login')
+
+    if not is_user_verified(user_type, user_object):
+        return redirect('login')
+
     if request.method=='POST' and "fulfil_req" in request.POST:
         form = RequestForm(request.POST)
         if form.is_valid():
