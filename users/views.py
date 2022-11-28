@@ -591,17 +591,17 @@ def verifydoc(request):
     # docurl = str(mydoc.medical_doc.url)
     print(docurl)
     print("doc")
+    print("1")
     # print(docurl)
     # print(docurl)
-    # tr = "/var/FCS_Project_file_upload/"
-    # docurl  = tr + docurl
-
     tr = "/var/FCS_Project_file_upload/"
-    docurl  = tr + docurl
+    newurl  = tr + docurl
+    print(newurl)
+    print("2")
 
     print(docurl)
     h1 = ""
-    with open(docurl , "rb") as f:
+    with open(newurl , "rb") as f:
         encoded_string = base64.b64encode(f.read())
         h1 =  hashlib.sha256(encoded_string).hexdigest()
     print(h1)
