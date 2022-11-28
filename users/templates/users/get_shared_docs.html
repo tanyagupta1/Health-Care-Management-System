@@ -38,6 +38,22 @@
         <input id="dis" type="text" name="dis" hidden value = {{doc.document.pk}}  >
         <input type="submit" value="view_doc" name = "view_doc">
         </form></td>
+
+        {% elif user.profile.user_type == "Infirmary" %}
+        <td><form  method="post">
+            {% csrf_token %}
+            <input id="dis" type="text" name="dis" hidden value = {{doc.document.pk}}  >
+            <input type="submit" value="view_doc" name = "view_doc">
+            </form></td>
+
+
+            {% elif user.profile.user_type == "InsuranceCompany" %}
+            <td><form  method="post">
+                {% csrf_token %}
+                <input id="dis" type="text" name="dis" hidden value = {{doc.document.pk}}  >
+                <input type="submit" value="view_doc" name = "view_doc">
+                </form></td>
+        
     {%endif%}
     
 
@@ -52,7 +68,13 @@
     
     {% if user.profile.user_type == "Patient" %}
     <td></td>
+    {% elif user.profile.user_type == "InsuranceCompany" %}
+    <td></td>
+    {% elif user.profile.user_type == "Infirmary" %}
+    <td></td>
+    
     {%endif%}
+    
        
     {% else %}
     <td>Not Verified</td>

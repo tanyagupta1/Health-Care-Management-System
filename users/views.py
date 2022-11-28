@@ -614,7 +614,7 @@ def get_shared_docs(request):
     if not is_user_verified(user_type, user_object):
         return redirect('login')
 
-    if request.method=='POST' and 'view_doc' in request.POST and request.user.profile.user_type == "Patient":
+    if request.method=='POST' and 'view_doc' in request.POST :
         ids = request.POST["dis"]
         request.session["docccccd"] = ids
 
@@ -721,7 +721,9 @@ def get_insurancecompanies(request):
     insurancecompanies = InsuranceCompany.objects.all()
     myFilter = InsuranceCompanyFilter(request.GET,queryset=insurancecompanies)
     insurancecompanies = myFilter.qs
-    return render (request,"users/get_insurancecompanies.html",{'insurancecompanies':insurancecompanies,'myFilter':myFilter})
+    refund_requests = InsuranceRefund.objects.filter(patient = request.user.patient)
+    
+    return render (request,"users/get_insurancecompanies.html",{'insurancecompanies':insurancecompanies,'myFilter':myFilter , "alldocs" : refund_requests})
 
 
 @user_login_required
