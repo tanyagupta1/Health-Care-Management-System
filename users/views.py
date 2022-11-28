@@ -139,13 +139,26 @@ def profile(request):
                                    instance=request.user.profile)
         user_type_form=''
         if(request.user.profile.user_type=="Patient"):
-            user_type_form = PatientForm(request.POST,request.FILES,instance = request.user.patient)
+            if(request.user.patient.is_verified):
+                user_type_form = PatientForm2(request.POST,request.FILES,instance = request.user.patient)
+            else:
+                user_type_form = PatientForm(request.POST,request.FILES,instance = request.user.patient)
         elif(request.user.profile.user_type=="Hospital"):
-            user_type_form = HospitalForm(request.POST,request.FILES,instance = request.user.hospital)
+            if(request.user.hospital.is_verified):
+                print("HEEEEEEREEEEE")
+                user_type_form = HospitalForm2(request.POST,request.FILES,instance = request.user.hospital)
+            else:
+                user_type_form = HospitalForm(request.POST,request.FILES,instance = request.user.hospital)
         elif(request.user.profile.user_type=="Infirmary"):
-            user_type_form = InfirmaryForm(request.POST,request.FILES,instance = request.user.infirmary)
+            if(request.user.infirmary.is_verified):
+                user_type_form = InfirmaryForm2(request.POST,request.FILES,instance = request.user.infirmary)
+            else:
+                user_type_form = InfirmaryForm(request.POST,request.FILES,instance = request.user.infirmary)
         elif(request.user.profile.user_type=="InsuranceCompany"):
-            user_type_form = InsuranceCompanyForm(request.POST,request.FILES,instance = request.user.insurancecompany)
+            if(request.user.insurancecompany.is_verified):
+                user_type_form = InsuranceCompanyForm2(request.POST,request.FILES,instance = request.user.insurancecompany)
+            else:
+                user_type_form = InsuranceCompanyForm(request.POST,request.FILES,instance = request.user.insurancecompany)
         if p_form.is_valid() and user_type_form.is_valid():
             p_form.save()
             user_type_form.save()
@@ -157,14 +170,31 @@ def profile(request):
         p_form = ProfileUpdateForm(instance=request.user.profile)
         user_type_form=''
         if(request.user.profile.user_type=="Patient"):
-            user_type_form =PatientForm(instance = request.user.patient)
+            if(request.user.patient.is_verified):
+                user_type_form = PatientForm2(instance = request.user.patient)
+            else:
+                user_type_form = PatientForm(instance = request.user.patient)
         elif(request.user.profile.user_type=="Hospital"):
-            user_type_form =HospitalForm(instance = request.user.hospital)
+            if(request.user.hospital.is_verified):
+                print("HEEEEEEREEEEE")
+                user_type_form = HospitalForm2(instance = request.user.hospital)
+            else:
+                user_type_form = HospitalForm(instance = request.user.hospital)
         elif(request.user.profile.user_type=="Infirmary"):
-            user_type_form =InfirmaryForm(instance = request.user.infirmary)
+            if(request.user.infirmary.is_verified):
+                user_type_form = InfirmaryForm2(instance = request.user.infirmary)
+            else:
+                user_type_form = InfirmaryForm(instance = request.user.infirmary)
         elif(request.user.profile.user_type=="InsuranceCompany"):
-            user_type_form =InsuranceCompanyForm(instance = request.user.insurancecompany)
-
+            if(request.user.insurancecompany.is_verified):
+                user_type_form = InsuranceCompanyForm2(instance = request.user.insurancecompany)
+            else:
+                user_type_form = InsuranceCompanyForm(instance = request.user.insurancecompany)
+        if p_form.is_valid() and user_type_form.is_valid():
+            p_form.save()
+            user_type_form.save()
+            messages.success(request, f'Your account has been updated!')
+            return redirect('profile')
         context = {'p_form': p_form,'user_type_form':user_type_form}
         return render(request, 'users/profile.html', context)    
 

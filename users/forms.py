@@ -47,7 +47,6 @@ class PatientForm(forms.ModelForm):
     model = Patient
     fields = ["verification_doc","fullname",'mobile_number']
 
-
 class HospitalForm(forms.ModelForm):
   class Meta:
     model = Hospital
@@ -62,6 +61,26 @@ class InsuranceCompanyForm(forms.ModelForm):
   class Meta:
     model = InsuranceCompany
     fields = ["verification_doc","fullname",'mobile_number',"location",'description','image_1','image_2']
+
+class PatientForm2(forms.ModelForm):
+  class Meta:
+    model = Patient
+    fields = ["fullname",'mobile_number']
+
+class HospitalForm2(forms.ModelForm):
+  class Meta:
+    model = Hospital
+    fields = ["fullname",'mobile_number',"location",'description','image_1','image_2']
+
+class InfirmaryForm2(forms.ModelForm):
+  class Meta:
+    model = Infirmary
+    fields = ["fullname",'mobile_number',"location",'description','image_1','image_2']
+
+class InsuranceCompanyForm2(forms.ModelForm):
+  class Meta:
+    model = InsuranceCompany
+    fields = ["fullname",'mobile_number',"location",'description','image_1','image_2']
 
 class MedicalDocumentsForm(forms.ModelForm):
     class Meta:
