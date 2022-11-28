@@ -39,13 +39,14 @@ def media_access(request, file):
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     print("HERE")
     try:
-        doc=get_object_or_404(MedicalDocuments,medical_doc="profile_pics/"+file)
+        doc=MedicalDocuments.objects.filter(medical_doc="profile_pics/"+file).first()
         view_access = ViewAccess.objects.filter(user = request.user,document = doc).first()
+        print(doc,"HI",view_access)
         if(view_access ==None ):
             return HttpResponseForbidden("Forbidden")
         else:
             return FileResponse(doc.medical_doc)
-    except:
+    except :
         return HttpResponseForbidden("Forbidden")
 #     path,file_name=os.path.split(file)
 #     response=FileResponse(document.medical_doc)
@@ -550,7 +551,8 @@ def get_infirmary_orders(request):
         new_doc = MedicalDocuments.objects.create(owner=obj.infirmary.user,medical_doc=doc_loc,is_verified=True,verifier=None)
         ViewAccess.objects.create(document = new_doc,user=obj.patient.user)
         ViewAccess.objects.create(document = new_doc,user=obj.infirmary.user)
-
+        obj.final_receipt = new_doc
+        obj.save()
     orders = InfirmaryOrder.objects.filter(infirmary = request.user.infirmary)
     return render (request,"users/get_infirmary_orders.html",{'requests':orders})
 
