@@ -43,10 +43,41 @@ def media_access(request, file):
         view_access = ViewAccess.objects.filter(user = request.user,document = doc).first()
         print(doc,"HI",view_access)
         if(view_access ==None ):
+            doc=None
+            #check profile pic and verification doc
+            if(request.user.profile.user_type=="Patient"):
+                doc=Profile.objects.filter(image="profile_pics/"+file,user=request.user).first()
+                if(doc!=None):
+                    return FileResponse(doc.image)
+                doc=Patient.objects.filter(verification_doc="profile_pics/"+file,user=request.user).first()
+                if(doc!=None):
+                    return FileResponse(doc.verification_doc)
+            elif(request.user.profile.user_type=="Hospital"):
+                doc=Profile.objects.filter(image="profile_pics/"+file,user=request.user).first()
+                if(doc!=None):
+                    return FileResponse(doc.image)
+                doc=Hospital.objects.filter(verification_doc="profile_pics/"+file,user=request.user).first()
+                if(doc!=None):
+                    return FileResponse(doc.verification_doc)
+            elif(request.user.profile.user_type=="Infirmary"):
+                doc=Profile.objects.filter(image="profile_pics/"+file,user=request.user).first()
+                if(doc!=None):
+                    return FileResponse(doc.image)
+                doc=Infirmary.objects.filter(verification_doc="profile_pics/"+file,user=request.user).first()
+                if(doc!=None):
+                    return FileResponse(doc.verification_doc)
+            elif(request.user.profile.user_type=="InsuranceCompany"):
+                doc=Profile.objects.filter(image="profile_pics/"+file,user=request.user).first()
+                if(doc!=None):
+                    return FileResponse(doc.image)
+                doc=InsuranceCompany.objects.filter(verification_doc="profile_pics/"+file,user=request.user).first()
+                if(doc!=None):
+                    return FileResponse(doc.verification_doc)
             return HttpResponseForbidden("Forbidden")
         else:
             return FileResponse(doc.medical_doc)
     except :
+        
         return HttpResponseForbidden("Forbidden")
 #     path,file_name=os.path.split(file)
 #     response=FileResponse(document.medical_doc)
