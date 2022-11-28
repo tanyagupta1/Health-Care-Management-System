@@ -83,6 +83,8 @@ def add_money(request):
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     if request.method=='POST':
         amount  = int(request.POST.get("amount"))
+        if(amount<0):
+            return HttpResponseForbidden("negative money not allowed")
         if(request.user.profile.user_type=="Patient"):
             request.user.patient.wallet += amount
             request.user.patient.save()   
@@ -102,13 +104,14 @@ def media_access(request, file):
     request.user = User_Auth.objects.filter(email_id = emailsp)[0]
     print("HERE")
     try:
-        doc=get_object_or_404(MedicalDocuments,medical_doc="profile_pics/"+file)
+        doc=MedicalDocuments.objects.filter(medical_doc="profile_pics/"+file).first()
         view_access = ViewAccess.objects.filter(user = request.user,document = doc).first()
+        print(doc,"HI",view_access)
         if(view_access ==None ):
             return HttpResponseForbidden("Forbidden")
         else:
             return FileResponse(doc.medical_doc)
-    except:
+    except :
         return HttpResponseForbidden("Forbidden")
 #     path,file_name=os.path.split(file)
 #     response=FileResponse(document.medical_doc)
@@ -554,7 +557,7 @@ def share_docs(request):
         form.fields['user'].queryset = User_Auth.objects.exclude(pk=request.user.pk)
         if(request.user.profile.user_type=='Hospital'):
             form.fields['user'].queryset = User_Auth.objects.filter(profile__user_type='Patient')
-            form.fields['document'].queryset = MedicalDocuments.objects.filter(owner=request.user)
+            form.fields['document'].queryset = MedicalDocuments.objects.filter(owner=request.user,is_verified=True)
     return render(request, 'users/share_docs.html', {'form': form })
 
 # #@loggin_required
@@ -565,6 +568,9 @@ def place_infirmary_order(request,inf_pk):
     if(request.method=="POST"):
         form = InfirmaryOrderForm(request.POST)
         if(form.is_valid()):
+            amount=form.cleaned_data.get('amount_paid')
+            if(amount<0):
+                return HttpResponseForbidden("negative money not allowed")
             obj = form.save(commit=False)
             obj.infirmary= Infirmary.objects.get(pk=inf_pk)
             obj.patient = request.user.patient
@@ -730,6 +736,7 @@ def payback(request,refund_pk):
     refund_request.patient.wallet+= refund_request.refund_amount
     request.user.insurancecompany.save()
     refund_request.patient.save()
+    Transactions.objects.create(sender = request.user,receiver=refund_request.patient.user,amount=refund_request.refund_amount)
     InsuranceRefund.objects.get(pk=refund_pk).delete()
     return redirect('get_insurance_refund_requests')
 

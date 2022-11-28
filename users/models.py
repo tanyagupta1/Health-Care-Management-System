@@ -101,7 +101,8 @@ class InfirmaryOrder(models.Model):
     amount_paid = models.IntegerField(default=0,null=True)
     description = models.TextField(default="na",null=True)
     is_fulfilled = models.BooleanField(default=False,null=True)
-    def _str_(self):
+    final_receipt = models.ForeignKey(MedicalDocuments,related_name='final_receipt',on_delete=models.CASCADE,null=True)
+    def __str__(self):
         return f'{self.patient.fullname} {self.infirmary.fullname} Infirmary Order'
 
 class InsuranceRefund(models.Model):
@@ -123,5 +124,13 @@ class DocRequestHospital(models.Model):
 class RequestModel(models.Model):
     document = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
     request = models.ForeignKey(DocRequestHospital,on_delete=models.CASCADE,null=True)
-    def _str_(self):
+    def __str__(self):
         return f'Requestform'
+
+class Transactions(models.Model):
+    sender = models.ForeignKey(User_Auth,related_name='sender',on_delete=models.CASCADE,null=True)
+    receiver = models.ForeignKey(User_Auth,related_name='reciever',on_delete=models.CASCADE,null=True)
+    amount = models.IntegerField(default=0,null=True)
+    time = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return f'{self.sender}{self.receiver} Transaction'
