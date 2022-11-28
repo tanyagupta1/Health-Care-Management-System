@@ -117,7 +117,7 @@ async function loadContract() {
       data :  { idData : x1 , vaL: 1},
       success: function(data){          
                 console.log('response received');
-                window.open("http://127.0.0.1:8000/" + docurl, "_blank");
+                window.open("https://192.168.2.244/" + docurl, "_blank");
                 window.location.href = "{% url 'get_shared_docs' %}" ;
             }
             });
