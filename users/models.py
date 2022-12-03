@@ -1,74 +1,100 @@
 from django.db import models
 from django.contrib.auth.models import User
-# Create your models here.
+import uuid
+from django.core.validators import RegexValidator
+from .validators import validate_file_extension, file_size
+# Create your models here
+# 
+# 
+# .
+
+
+
+class User_Auth(models.Model):
+    email_id = models.CharField(default='na', max_length = 200 , primary_key=True)
+    password_hash = models.CharField(default='na', max_length = 512)
+    is_authenticated = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f'{self.email_id} User_Password'
 
 class Profile(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    user = models.OneToOneField(User_Auth ,on_delete=models.CASCADE)
     user_type_decided=models.BooleanField(default=False) # this is set to true once user type is decided
-    image = models.ImageField(default='default.jpg',upload_to='profile_pics',null=True)
+    image = models.ImageField(default='default.jpg',upload_to='profile_pics',null=True, validators = [file_size])
     user_type = models.CharField(default='na',max_length=200)
     def __str__(self):
-        return f'{self.user.username} Profile'
+        return f'{self.user.email_id} Profile'
 
 class Patient(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE)
-    verification_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
-    fullname = models.CharField(max_length=200,null=True)
+    user = models.OneToOneField(User_Auth,on_delete=models.CASCADE)
+    verification_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True, validators=[validate_file_extension, file_size])
+    fullname = models.CharField(max_length=200,null=True, validators=[RegexValidator('[!@#$%^&*()_+-=~`[]{}|;\\\'",./<>?]', inverse_match=True)])
     mobile_number = models.IntegerField(null=True) 
     is_verified = models.BooleanField(default=False,null=True) # set true after document verification
-    wallet = models.IntegerField(default=1000000,null=True)
+    wallet = models.PositiveIntegerField(default=1000000,null=True)
     def __str__(self):
-        return f'{self.user.username} Patient'
+        return f'{self.user.email_id} Patient'
 
 class Hospital(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE)
-    verification_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
-    fullname = models.CharField(max_length=200,null=True)
-    location = models.CharField(default="Delhi",max_length=200,null=True)
+    user = models.OneToOneField(User_Auth,on_delete=models.CASCADE)
+    verification_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True, validators=[validate_file_extension, file_size])
+    fullname = models.CharField(max_length=200,null=True, validators=[RegexValidator('[!@#$%^&*()_+-=~`[]{}|;\\\'",./<>?]', inverse_match=True)])
+    location = models.CharField(default="Delhi",max_length=200,null=True, validators=[RegexValidator('[!@#$%^&*()_+-=~`[]{}|;\\\'",./<>?]', inverse_match=True)])
     mobile_number = models.IntegerField(null=True) 
     is_verified = models.BooleanField(default=False,null=True) # set true after document verification
+    description = models.TextField(default="na",null=True)
+    image_1 = models.ImageField(default='default.jpg',upload_to='profile_pics',null=True, validators = [file_size])
+    image_2 = models.ImageField(default='default.jpg',upload_to='profile_pics',null=True, validators = [file_size])
     def __str__(self):
-        return f'{self.user.username} Hospital'
+        return f'{self.user.email_id} Hospital'
 
 class Infirmary(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE)
-    verification_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
-    fullname = models.CharField(max_length=200,null=True)
-    location = models.CharField(default="Delhi",max_length=200,null=True)
+    user = models.OneToOneField(User_Auth,on_delete=models.CASCADE)
+    verification_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True, validators=[validate_file_extension, file_size])
+    fullname = models.CharField(max_length=200,null=True, validators=[RegexValidator('[!@#$%^&*()_+-=~`[]{}|;\\\'",./<>?]', inverse_match=True)])
+    location = models.CharField(default="Delhi",max_length=200,null=True, validators=[RegexValidator('[!@#$%^&*()_+-=~`[]{}|;\\\'",./<>?]', inverse_match=True)])
     mobile_number = models.IntegerField(null=True) 
     is_verified = models.BooleanField(default=False,null=True) # set true after document verification
-    wallet = models.IntegerField(default=1000000,null=True)
+    wallet = models.PositiveIntegerField(default=1000000,null=True)
+    description = models.TextField(default="na",null=True)
+    image_1 = models.ImageField(default='default.jpg',upload_to='profile_pics',null=True, validators = [file_size])
+    image_2 = models.ImageField(default='default.jpg',upload_to='profile_pics',null=True, validators = [file_size])
     def __str__(self):
-        return f'{self.user.username} Infirmary'
+        return f'{self.user.email_id} Infirmary'
 
 class InsuranceCompany(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE)
-    verification_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
-    fullname = models.CharField(max_length=200,null=True)
-    location = models.CharField(default="Delhi",max_length=200,null=True)
+    user = models.OneToOneField(User_Auth,on_delete=models.CASCADE)
+    verification_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True, validators=[validate_file_extension, file_size])
+    fullname = models.CharField(max_length=200,null=True, validators=[RegexValidator('[!@#$%^&*()_+-=~`[]{}|;\\\'",./<>?]', inverse_match=True)])
+    location = models.CharField(default="Delhi",max_length=200,null=True, validators=[RegexValidator('[!@#$%^&*()_+-=~`[]{}|;\\\'",./<>?]', inverse_match=True)])
     mobile_number = models.IntegerField(null=True) 
     is_verified = models.BooleanField(default=False,null=True) # set true after document verification
-    wallet = models.IntegerField(default=1000000,null=True)
+    description = models.TextField(default="na",null=True)
+    image_1 = models.ImageField(default='default.jpg',upload_to='profile_pics',null=True, validators=[validate_file_extension, file_size])
+    image_2 = models.ImageField(default='default.jpg',upload_to='profile_pics',null=True, validators=[validate_file_extension, file_size])
+    wallet = models.PositiveIntegerField(default=1000000,null=True)
     def __str__(self):
-        return f'{self.user.username} InsuranceCompany'
+        return f'{self.user.email_id} InsuranceCompany'
 
 
 
 
 class MedicalDocuments(models.Model):
-    patient = models.ForeignKey(Patient,on_delete=models.CASCADE,null=True)
-    hospital = models.ForeignKey(Hospital,on_delete=models.CASCADE,null=True)
-    medical_doc= models.FileField(default='default.jpg',upload_to='profile_pics',null=True)
+    unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    owner = models.ForeignKey(User_Auth,on_delete=models.CASCADE,null=True)
+    medical_doc= models.FileField(upload_to='profile_pics',null=True, validators=[validate_file_extension, file_size])
     is_verified = models.BooleanField(default=False,null=True) 
+    verifier = models.ForeignKey(Hospital,on_delete=models.CASCADE,null=True)
     def __str__(self):
-        return f'{self.patient.fullname} {self.hospital.fullname} Medical Doc'
+        return f'{self.unique_id} Medical Doc'
 
 
 class ViewAccess(models.Model):
     document = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
-    user = models.ForeignKey(User,on_delete=models.CASCADE,null=True)
+    user = models.ForeignKey(User_Auth,on_delete=models.CASCADE,null=True)
     def __str__(self):
-        return "Access"
+        return f'{self.user.email_id} can access {self.document}'
 
 class InfirmaryOrder(models.Model):
     patient = models.ForeignKey(Patient,on_delete=models.CASCADE,null=True)
@@ -76,6 +102,8 @@ class InfirmaryOrder(models.Model):
     doc = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
     amount_paid = models.IntegerField(default=0,null=True)
     description = models.TextField(default="na",null=True)
+    is_fulfilled = models.BooleanField(default=False,null=True)
+    final_receipt = models.ForeignKey(MedicalDocuments,related_name='final_receipt',on_delete=models.CASCADE,null=True)
     def __str__(self):
         return f'{self.patient.fullname} {self.infirmary.fullname} Infirmary Order'
 
@@ -86,3 +114,25 @@ class InsuranceRefund(models.Model):
     refund_amount= models.IntegerField(default=0,null=True)
     def __str__(self):
         return f'Insurance Refund'
+
+class DocRequestHospital(models.Model):
+    unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    patient = models.ForeignKey(Patient,on_delete=models.CASCADE,null=True)
+    hospital = models.ForeignKey(Hospital,on_delete=models.CASCADE,null=True)
+    is_fulfilled = models.BooleanField(default=False,null=True)
+    def __str__(self):
+        return f'{self.unique_id} Doc request'
+
+class RequestModel(models.Model):
+    document = models.ForeignKey(MedicalDocuments,on_delete=models.CASCADE,null=True)
+    request = models.ForeignKey(DocRequestHospital,on_delete=models.CASCADE,null=True)
+    def __str__(self):
+        return f'Requestform'
+
+class Transactions(models.Model):
+    sender = models.ForeignKey(User_Auth,related_name='sender',on_delete=models.CASCADE,null=True)
+    receiver = models.ForeignKey(User_Auth,related_name='reciever',on_delete=models.CASCADE,null=True)
+    amount = models.IntegerField(default=0,null=True)
+    time = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return f'{self.sender}{self.receiver} Transaction'

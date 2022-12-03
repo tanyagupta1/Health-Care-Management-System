@@ -1,0 +1,93 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1>List of Documents {{user.profile.user_type}}</h1>
+<div>
+
+</div>
+<div>
+    
+<table border="1">
+    <tr>
+        {% if user.profile.user_type == "Hospital" %}
+        <th>url</th>
+        {%endif%}
+        <th>id </th>
+        <th>status</th>
+        {% if user.profile.user_type == "Patient" %}
+        <th></th>
+        {%endif%}
+        
+    </tr>
+{% for doc in docs %}
+
+<tr>
+    <!-- <td>{{doc.document.pk}}</td> -->
+    <!-- <td><a href="{{doc.document.medical_doc.url}}">View Doc</a></td> -->
+    {% if user.profile.user_type == "Hospital" %}
+    <td><a href="{{doc.document.medical_doc.url}}">View Doc</a></td>
+        {%endif%}
+        <td>{{doc.document.unique_id}}</td>
+    {% if doc.document.is_verified %}
+
+    <td>Verified</td>
+
+    {% if user.profile.user_type == "Patient" %}
+    <td><form  method="post">
+        {% csrf_token %}
+        <input id="dis" type="text" name="dis" hidden value = {{doc.document.pk}}  >
+        <input type="submit" value="view_doc" name = "view_doc">
+        </form></td>
+
+        {% elif user.profile.user_type == "Infirmary" %}
+        <td><form  method="post">
+            {% csrf_token %}
+            <input id="dis" type="text" name="dis" hidden value = {{doc.document.pk}}  >
+            <input type="submit" value="view_doc" name = "view_doc">
+            </form></td>
+
+
+            {% elif user.profile.user_type == "InsuranceCompany" %}
+            <td><form  method="post">
+                {% csrf_token %}
+                <input id="dis" type="text" name="dis" hidden value = {{doc.document.pk}}  >
+                <input type="submit" value="view_doc" name = "view_doc">
+                </form></td>
+        
+    {%endif%}
+    
+
+    {% elif user.profile.user_type == "Hospital" %} 
+    <td>
+        <form  method="post">
+            {% csrf_token %}
+            <input id="xyz" type="text" name="xyz" hidden value = {{doc.document.pk}}  >
+            <input type="submit" value="Verify">
+        </form>
+    </td>
+    
+    {% if user.profile.user_type == "Patient" %}
+    <td></td>
+    {% elif user.profile.user_type == "InsuranceCompany" %}
+    <td></td>
+    {% elif user.profile.user_type == "Infirmary" %}
+    <td></td>
+    
+    {%endif%}
+    
+       
+    {% else %}
+    <td>Not Verified</td>
+    
+    {% endif %}
+    
+    
+   
+</tr>
+
+{% endfor %}
+</table>
+
+
+</div>
+{% endblock content %}

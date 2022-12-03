@@ -5,6 +5,26 @@
     table {margin:3; }
 </style>
 <div>
+    <h3>patients</h3>
+    <table border="1">
+        <tr>
+            <th>Patient Name</th>
+          </tr>
+    {% for patient in patientsAll %}
+    
+    <tr>
+        <td>{{patient.fullname}}</td>
+        
+        <td><form  method="post">
+            {% csrf_token %}
+            <input id="xyz" type="text" name="xyz" hidden value = {{patient.user.pk}}  >
+            <input type="submit" value="Share it with this">
+            </form></td>
+    </tr>
+    
+    {% endfor %}
+    </table>
+
     <h3>hospitals</h3>
     <table border="1">
         <tr>

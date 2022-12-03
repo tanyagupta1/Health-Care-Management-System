@@ -6,18 +6,30 @@
 <table border="1">
     <tr>
         <th>Name</th>
-        <th>Doc</th>
+        <!-- <th>Doc</th> -->
         <th>Amount</th>
         <th>Description</th>
+        <th>confirm order</th>
       </tr>
 {% for r in requests%}
 
 <tr>
     <td>{{r.patient.fullname}}</td>
-    <td><a href="{{r.doc.medical_doc.url}}">{{r.doc.medical_doc.url}}</a></td>
+    <!-- <td><a href="{{r.doc.medical_doc.url}}">{{r.doc.medical_doc.url}}</a></td> -->
     <td>{{r.amount_paid}}</td>
     <td>{{r.description}}</td>
-    
+    <td>
+        {% if r.is_fulfilled   %}
+        Confirmed
+        {% else %}
+        
+        <form  method="post">
+            {% csrf_token %}
+            <input id="request_pk" type="text" name="request_pk" hidden value = {{r.pk}}  >
+            <input type="submit" value="Confirm order">
+            </form>
+        {% endif %}
+    </td>
 
 </tr>
 

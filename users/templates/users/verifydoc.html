@@ -1,0 +1,134 @@
+<html>
+    <head>
+   
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+        <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+        <script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>
+        <!-- <script src='node_modules/web3/dist/web3.min.js'></script> -->
+        <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@0.18.2/dist/web3.min.js"></script>
+        <!-- Web3= -->
+        
+    </head>
+    body>
+    <h2>Wait while transaction is happening(still in process thambaaa thambaaa)</h2>
+    
+    <script>
+       var hashval = "{{hash}}"; 
+       var docid = "{{doc}}"
+       var docurl = "{{docurl}}"
+       
+       
+       
+        async function loadWeb3() {
+        if (window.ethereum) {
+        window.web3 = new Web3(window.ethereum);
+        window.ethereum.enable();
+        }
+        }
+
+
+web3=new Web3(web3.currentProvider);
+
+async function loadContract() {
+    return await new window.web3.eth.Contract([
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"name": "hash",
+				"type": "string"
+			}
+		],
+		"name": "setDocID",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [{
+				"name": "id",
+				"type": "uint256"
+			}],
+		"name": "getDocumentHash",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+], '0xaeb8f6eadba21e5fefe63690708d30f0f9300fbb');
+}
+      
+
+      async function connectMetamask() {
+        window.ethereum.enable()
+            .then(async (rs) => {
+                setMyAccount(rs[0])
+                let balance = await web3.current.eth.getBalance(accounts[0]);
+                setBalance(web3.current.utils.fromWei(balance))
+            })
+    }
+    
+    
+    
+    
+           async function getValue(x1){
+            console.log("d ended")
+            
+            var d =await window.contract.methods.getDocumentHash(x1).call();
+            console.log(d);
+            console.log("answer from d"); 
+            return d ; 
+        }
+        
+        async function load() {
+            await loadWeb3();
+            window.contract = await loadContract();
+            // updateStatus('Ready!');
+        }
+
+        async function doall(x1 , x2){
+            await connectMetamask();
+    await load();
+
+    valX = await getValue(x1); 
+    if(valX == hashval){
+        console.log(true); 
+    }
+    else{
+        console.log(false); 
+    }
+    $.ajax({
+      type: "POST",
+      url: "{% url 'verifydoc' %}",
+      data :  { idData : x1 , vaL: 1},
+      success: function(data){          
+                console.log('response received');
+                
+                window.open("https://192.168.2.244/" + docurl, "_blank");
+                window.location.href = "{% url 'get_shared_docs' %}" ;
+            }
+            });
+    
+            
+
+
+}
+doall(parseInt("1"), hashval); 
+
+    </script>
+    </body>
+</html>
